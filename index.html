@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <!-- Custom styles -->
+    <style>
+        body {
+            background-color: black;
+            font-family: "Ubuntu Mono", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 150px;
+        }
+
+        h1 {
+            font-size: 3em;
+        }
+
+        p {
+            font-size: 1.5em;
+        }
+
+        .custom-loader {
+            width: 120px;
+            height: 22px;
+            border-radius: 40px;
+            color: #E4E4ED;
+            border: 2px solid;
+            position: relative;
+            overflow: hidden;
+            margin: 30px auto;
+        }
+
+        .custom-loader::before {
+            content: "";
+            position: absolute;
+            margin: 2px;
+            width: 14px;
+            top: 0;
+            bottom: 0;
+            left: -20px;
+            border-radius: inherit;
+            background: #766DF4;
+            box-shadow: -10px 0 12px 3px #766DF4;
+            clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 95%, -30px 50%);
+            animation: ct4 1s infinite linear;
+        }
+
+        @keyframes ct4 {
+            100% {
+                left: calc(100% + 20px)
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container col">
+        <h1 class="mb-5 fw-bold text-white">Sindikat.</h1>
+        <div class="text-white fw-light">
+            <h3>Coming Soon</h3>
+        <p>Sedang dikerjakan oleh tukang ketik 🧑‍💻 dan seorang ratu 👸</p>
+        </div>
+        <div class="custom-loader"></div>
+    </div>
+
+</body>
+
+</html>
