@@ -358,9 +358,10 @@
 
         .music-toggle .track-label {
             position: absolute;
-            right: -12px;
+            /* Default (wide viewport): tooltip di kanan tombol */
+            left: calc(100% + 12px);
             top: 50%;
-            transform: translate(100%, -50%);
+            transform: translateY(-50%);
             white-space: nowrap;
             background: var(--paper);
             border: 1.5px solid var(--line);
@@ -372,14 +373,31 @@
             letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--ink);
+            box-shadow: 0 6px 18px rgba(30, 22, 12, .18);
             opacity: 0;
             pointer-events: none;
-            transition: opacity .3s, transform .3s;
+            transition: opacity .3s ease, transform .3s ease;
+            z-index: 101;
         }
 
         .music-toggle.hint .track-label {
             opacity: 1;
-            transform: translate(100%, -50%);
+        }
+
+        /* Mobile: tooltip pindah ke atas tombol biar ga ke-clip
+           layar sempit. Text-wrap kalau perlu. */
+        @media (max-width: 640px) {
+            .music-toggle .track-label {
+                left: 0;
+                top: auto;
+                bottom: calc(100% + 12px);
+                transform: none;
+                white-space: normal;
+                max-width: min(78vw, 320px);
+                line-height: 1.35;
+                text-align: left;
+                letter-spacing: 0.08em;
+            }
         }
 
         /* -------- Language toggle -------- */
@@ -2394,29 +2412,26 @@
         }
 
         musicBtn.addEventListener("click", () => {
-            // First click → stop the highlight pulse (user udah notice tombolnya)
+            // First click → stop the highlight pulse
             musicBtn.classList.remove("highlight");
 
             if (audio.paused) {
-                audio.play()
-                    .then(() => {
-                        setPlaying(true);
-                        flashHint(4500);
-                    })
-                    .catch((err) => {
-                        console.warn("[audio] play blocked:", err);
-                        setPlaying(false);
-                    });
+                audio.play().catch((err) => {
+                    console.warn("[audio] play blocked:", err);
+                    setPlaying(false);
+                });
             } else {
                 audio.pause();
-                setPlaying(false);
             }
         });
+
+        // Centralized play/pause handling — apapun trigger-nya (klik tombol,
+        // autoplay dari "Buka Undangan", programmatic), sync UI state.
         audio.addEventListener("play", () => {
             setPlaying(true);
-            // Auto-clear pulse highlight kalo lagu udah beneran jalan
-            // (misal via autoplay dari klik "Buka Undangan")
             musicBtn.classList.remove("highlight");
+            // Flash tooltip "Sedang Diputar..." tiap kali lagu jalan
+            flashHint(5500);
         });
         audio.addEventListener("pause", () => setPlaying(false));
 
@@ -2429,29 +2444,50 @@
             // Klik "Buka Undangan" = valid user gesture buat browser
             // autoplay policy. Trigger audio.play() langsung di sini biar
             // lagu mulai bareng splash close (tanpa perlu klik 2x).
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise
-                    .then(() => {
-                        // Tooltip "Sedang Diputar..." muncul singkat pas
-                        // tombol musik udah fade-in di viewport
-                        setTimeout(() => flashHint(5000), 900);
-                    })
-                    .catch((err) => {
-                        // Autoplay masih di-block (rare kalau ini dipanggil
-                        // langsung dari click handler). Fallback: highlight
-                        // tombol biar user tau harus klik manual.
-                        console.warn("[audio] autoplay blocked:", err);
-                    });
-            }
+            // Tooltip di-handle otomatis di audio "play" event listener.
+            tryPlayAudio();
 
             // Tombol musik: fade in + pulse highlight.
-            // Kalau play sukses, pulse hilang begitu user notice/klik tombol
-            // (auto-remove di handler musicBtn). Kalau di-block, pulse jadi
-            // sinyal buat user klik manual.
+            // Kalau play sukses, pulse hilang otomatis lewat audio.on("play").
+            // Kalau di-block, pulse jadi sinyal buat user klik manual.
             setTimeout(() => {
                 musicBtn.classList.add("ready", "highlight");
             }, 600);
+        }
+
+        // Resilient autoplay: kalau reject (kena autoplay policy atau audio
+        // belum ready), fallback ke:
+        //  1. Retry pas audio "canplay" event
+        //  2. Retry pas user interact di manapun (klik/touch/scroll/keypress)
+        function tryPlayAudio() {
+            const p = audio.play();
+            if (!p || typeof p.catch !== "function") return;
+
+            p.catch((err) => {
+                console.warn("[audio] play blocked, arming fallback listeners:", err);
+
+                const retry = () => {
+                    audio.play()
+                        .then(() => cleanupRetries())
+                        .catch(() => { /* try again on next event */ });
+                };
+                const cleanupRetries = () => {
+                    audio.removeEventListener("canplay", retry);
+                    window.removeEventListener("pointerdown", retry, true);
+                    window.removeEventListener("touchstart", retry, true);
+                    window.removeEventListener("keydown", retry, true);
+                    window.removeEventListener("scroll", retry, true);
+                };
+
+                audio.addEventListener("canplay", retry, { once: false });
+                window.addEventListener("pointerdown", retry, { capture: true });
+                window.addEventListener("touchstart", retry, { capture: true, passive: true });
+                window.addEventListener("keydown", retry, { capture: true });
+                window.addEventListener("scroll", retry, { capture: true, passive: true });
+
+                // Clean up ONCE audio starts playing (via listener above)
+                audio.addEventListener("play", cleanupRetries, { once: true });
+            });
         }
 
         document.getElementById("open-invite").addEventListener("click", openInvitation);
