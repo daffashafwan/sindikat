@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Italiana&family=Pinyon+Script&family=Inter:wght@300;400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Italiana&family=Pinyon+Script&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
@@ -20,12 +20,12 @@
             --bg: #f7f1e6;
             --bg-soft: #efe6d2;
             --paper: #fbf7ee;
-            --ink: #322c22;
-            --ink-soft: #7a7263;
-            --accent: #b0975f;
+            --ink: #2b251c;
+            --ink-soft: #5f574a;
+            --accent: #a68a4a;
             --accent-soft: #d9c69a;
-            --sage: #8f9d85;
-            --line: #d1c2a1;
+            --sage: #6f8069;
+            --line: #c9b98f;
             --line-soft: #e6dcc4;
             --shadow: 0 20px 60px rgba(59, 53, 43, .08);
             --shadow-soft: 0 8px 24px rgba(59, 53, 43, .05);
@@ -45,9 +45,9 @@
             background: var(--bg);
             color: var(--ink);
             font-family: "Cormorant Garamond", serif;
-            font-weight: 400;
-            font-size: 18px;
-            line-height: 1.7;
+            font-weight: 500;
+            font-size: 19px;
+            line-height: 1.65;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             position: relative;
@@ -84,10 +84,10 @@
 
         .mono {
             font-family: "Inter", sans-serif;
-            letter-spacing: 0.14em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            font-size: 11px;
-            font-weight: 400;
+            font-size: 13px;
+            font-weight: 500;
             color: var(--ink-soft);
         }
 
@@ -141,8 +141,9 @@
 
         .splash .invite-label {
             font-family: "Inter", sans-serif;
-            font-size: 11px;
-            letter-spacing: 0.3em;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
             color: var(--ink-soft);
             margin-bottom: 20px;
@@ -163,10 +164,10 @@
         .splash .date {
             margin-top: 22px;
             font-family: "Italiana", serif;
-            letter-spacing: 0.28em;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            font-size: 12px;
-            color: var(--ink-soft);
+            font-size: 14px;
+            color: var(--ink);
         }
 
         .splash .to-block {
@@ -176,25 +177,25 @@
 
         .splash .to-label {
             font-family: "Italiana", serif;
-            letter-spacing: 0.25em;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            font-size: 11px;
+            font-size: 13px;
             color: var(--ink-soft);
         }
 
         .splash .to-name {
             margin-top: 8px;
             font-family: "Italiana", serif;
-            font-size: 24px;
-            letter-spacing: 0.04em;
+            font-size: 26px;
+            letter-spacing: 0.03em;
             color: var(--ink);
             min-height: 1.5em;
         }
 
         .splash .to-note {
             margin-top: 10px;
-            font-style: italic;
-            font-size: 15px;
+            font-weight: 500;
+            font-size: 17px;
             color: var(--ink-soft);
         }
 
@@ -202,14 +203,15 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            padding: 15px 34px;
+            padding: 16px 36px;
             background: var(--ink);
             color: var(--bg);
             border: 1px solid var(--ink);
             border-radius: 999px;
             font-family: "Inter", sans-serif;
-            font-size: 11px;
-            letter-spacing: 0.28em;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
             cursor: pointer;
             transition: all .3s;
@@ -218,7 +220,7 @@
         .splash .open-btn:hover {
             background: transparent;
             color: var(--ink);
-            letter-spacing: 0.32em;
+            letter-spacing: 0.22em;
         }
 
         .splash .open-btn svg {
@@ -258,6 +260,56 @@
             box-shadow: var(--shadow);
         }
 
+        /* Highlight state — pulse ring buat narik perhatian
+           setelah splash close, sampai user first-click */
+        .music-toggle.highlight {
+            border-color: var(--accent);
+        }
+
+        .music-toggle.highlight::before,
+        .music-toggle.highlight::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            pointer-events: none;
+            animation: musicPulseRing 2.2s cubic-bezier(0.2, 0.7, 0.4, 1) infinite;
+            opacity: 0;
+        }
+
+        .music-toggle.highlight::after {
+            animation-delay: 1.1s;
+        }
+
+        @keyframes musicPulseRing {
+            0%   { transform: scale(1);   opacity: 0.85; }
+            80%  { transform: scale(1.9); opacity: 0; }
+            100% { transform: scale(1.9); opacity: 0; }
+        }
+
+        /* subtle breathing glow di disc icon-nya sendiri */
+        .music-toggle.highlight .disc {
+            color: var(--accent);
+            animation: musicBreathe 2.2s ease-in-out infinite;
+        }
+
+        @keyframes musicBreathe {
+            0%, 100% { opacity: 0.7; }
+            50%      { opacity: 1;   }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .music-toggle.highlight::before,
+            .music-toggle.highlight::after,
+            .music-toggle.highlight .disc {
+                animation: none;
+            }
+            .music-toggle.highlight::before {
+                opacity: 0.6;
+            }
+        }
+
         .music-toggle .disc {
             width: 36px;
             height: 36px;
@@ -285,10 +337,10 @@
             padding: 8px 14px;
             border-radius: 999px;
             font-family: "Italiana", serif;
-            font-size: 11px;
-            letter-spacing: 0.15em;
+            font-size: 13px;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: var(--ink-soft);
+            color: var(--ink);
             opacity: 0;
             pointer-events: none;
             transition: opacity .3s, transform .3s;
@@ -317,11 +369,12 @@
         .lang-toggle button {
             background: transparent;
             border: none;
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 999px;
             font-family: "Inter", sans-serif;
-            font-size: 11px;
-            letter-spacing: 0.12em;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
             color: var(--ink-soft);
             cursor: pointer;
             transition: all .3s;
@@ -396,8 +449,8 @@
 
         .section-num .numeral {
             font-family: "Italiana", serif;
-            font-size: 18px;
-            letter-spacing: 0.35em;
+            font-size: 20px;
+            letter-spacing: 0.28em;
         }
 
         /* -------- Monogram D&A -------- */
@@ -463,9 +516,9 @@
         }
 
         p.lede {
-            font-size: clamp(17px, 1.6vw, 20px);
+            font-size: clamp(18px, 1.6vw, 21px);
             color: var(--ink-soft);
-            font-style: italic;
+            font-weight: 500;
             max-width: 560px;
             margin: 0 auto;
         }
@@ -504,8 +557,8 @@
             align-items: center;
             gap: 20px;
             font-family: "Italiana", serif;
-            font-size: clamp(16px, 1.8vw, 20px);
-            letter-spacing: 0.25em;
+            font-size: clamp(17px, 1.8vw, 21px);
+            letter-spacing: 0.2em;
             text-transform: uppercase;
             color: var(--ink);
         }
@@ -586,9 +639,9 @@
         }
 
         .couple .person .parents {
-            font-style: italic;
             color: var(--ink-soft);
-            font-size: 17px;
+            font-size: 19px;
+            font-weight: 500;
             line-height: 1.5;
         }
 
@@ -684,9 +737,9 @@
 
         .event .big-date .cell .lbl {
             font-family: "Italiana", serif;
-            letter-spacing: 0.35em;
+            letter-spacing: 0.28em;
             text-transform: uppercase;
-            font-size: 11px;
+            font-size: 13px;
             color: var(--ink-soft);
         }
 
@@ -711,9 +764,9 @@
 
         .event .day-of-week {
             font-family: "Italiana", serif;
-            letter-spacing: 0.5em;
+            letter-spacing: 0.35em;
             text-transform: uppercase;
-            font-size: 12px;
+            font-size: 14px;
             color: var(--ink-soft);
             margin-top: 6px;
         }
@@ -746,9 +799,9 @@
 
         .event .schedule .slot .time {
             font-family: "Italiana", serif;
-            letter-spacing: 0.2em;
-            font-size: 15px;
-            color: var(--ink-soft);
+            letter-spacing: 0.16em;
+            font-size: 17px;
+            color: var(--ink);
             text-transform: uppercase;
         }
 
@@ -798,8 +851,9 @@
         .countdown .lbl {
             margin-top: 8px;
             font-family: "Inter", sans-serif;
-            font-size: 10px;
-            letter-spacing: 0.2em;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
             color: var(--ink-soft);
         }
@@ -818,8 +872,9 @@
 
         .location .venue-address {
             color: var(--ink-soft);
-            font-style: italic;
-            margin-top: 6px;
+            font-weight: 500;
+            font-size: 19px;
+            margin-top: 8px;
         }
 
         .location .venue-3d {
@@ -853,8 +908,9 @@
 
         .location .venue-hint {
             font-family: "Inter", sans-serif;
-            font-size: 10px;
-            letter-spacing: 0.24em;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
             color: var(--ink-soft);
             margin-bottom: 40px;
@@ -888,10 +944,11 @@
         .location .venue-3d .maplibregl-ctrl-attrib {
             background: rgba(251, 247, 238, 0.85) !important;
             font-family: "Inter", sans-serif !important;
-            font-size: 9px !important;
+            font-size: 11px !important;
+            font-weight: 500 !important;
             letter-spacing: 0.02em;
             color: var(--ink-soft) !important;
-            padding: 3px 8px !important;
+            padding: 4px 10px !important;
         }
 
         .location .venue-3d .maplibregl-ctrl-attrib a {
@@ -957,20 +1014,20 @@
         .landmark-marker .label {
             background: rgba(251, 247, 238, 0.94);
             border: 1px solid var(--line);
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 999px;
             font-family: "Italiana", serif;
-            font-size: 12px;
-            letter-spacing: 0.06em;
+            font-size: 14px;
+            letter-spacing: 0.04em;
             color: var(--ink);
             white-space: nowrap;
             box-shadow: 0 2px 6px rgba(59, 53, 43, .1);
         }
 
         @media (max-width: 560px) {
-            .landmark-marker .label { font-size: 10px; padding: 3px 8px; }
-            .landmark-marker .dot { width: 24px; height: 24px; }
-            .landmark-marker .dot svg { width: 13px; height: 13px; }
+            .landmark-marker .label { font-size: 12px; padding: 4px 10px; }
+            .landmark-marker .dot { width: 26px; height: 26px; }
+            .landmark-marker .dot svg { width: 14px; height: 14px; }
         }
 
         /* Fallback state (no coords) */
@@ -1038,22 +1095,24 @@
 
         .location .qr .qr-lbl {
             font-family: "Inter", sans-serif;
-            font-size: 10px;
-            letter-spacing: 0.2em;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
             color: var(--ink-soft);
         }
 
         .btn {
             display: inline-block;
-            padding: 14px 30px;
+            padding: 15px 32px;
             background: var(--ink);
             color: var(--bg);
             border: 1px solid var(--ink);
             border-radius: 999px;
             font-family: "Inter", sans-serif;
-            font-size: 12px;
-            letter-spacing: 0.2em;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
             text-decoration: none;
             cursor: pointer;
@@ -1087,8 +1146,9 @@
         .rsvp label {
             display: block;
             font-family: "Inter", sans-serif;
-            font-size: 10px;
-            letter-spacing: 0.2em;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--ink-soft);
             margin-bottom: 8px;
@@ -1103,7 +1163,8 @@
             background: transparent;
             padding: 10px 2px;
             font-family: "Cormorant Garamond", serif;
-            font-size: 18px;
+            font-size: 19px;
+            font-weight: 500;
             color: var(--ink);
             outline: none;
             transition: border-color .2s;
@@ -1120,7 +1181,7 @@
             min-height: 120px;
             resize: vertical;
             font-family: "Cormorant Garamond", serif;
-            font-style: italic;
+            font-weight: 500;
         }
 
         .rsvp .radio-group {
@@ -1138,8 +1199,8 @@
             text-align: center;
             cursor: pointer;
             font-family: "Italiana", serif;
-            font-size: 14px;
-            letter-spacing: 0.15em;
+            font-size: 16px;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--ink-soft);
             margin-bottom: 0;
@@ -1167,7 +1228,8 @@
             margin-top: 20px;
             text-align: center;
             color: var(--sage);
-            font-style: italic;
+            font-weight: 600;
+            font-size: 18px;
         }
 
         /* -------- Wishes wall -------- */
@@ -1197,23 +1259,25 @@
 
         .wish .meta {
             font-family: "Inter", sans-serif;
-            font-size: 10px;
-            letter-spacing: 0.18em;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--ink-soft);
-            margin-top: 3px;
+            margin-top: 4px;
         }
 
         .wish .msg {
             margin-top: 10px;
-            font-style: italic;
+            font-weight: 500;
             color: var(--ink);
+            font-size: 19px;
         }
 
         .wishes-empty {
             text-align: center;
             color: var(--ink-soft);
-            font-style: italic;
+            font-weight: 500;
             margin-top: 20px;
         }
 
@@ -1246,33 +1310,35 @@
 
         .gift .acc .bank {
             font-family: "Inter", sans-serif;
-            font-size: 10px;
-            letter-spacing: 0.22em;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
             color: var(--ink-soft);
         }
 
         .gift .acc .num {
             font-family: "Italiana", serif;
-            font-size: 22px;
+            font-size: 24px;
             letter-spacing: 0.06em;
             margin: 4px 0;
         }
 
         .gift .acc .holder {
-            font-style: italic;
-            color: var(--ink-soft);
-            font-size: 15px;
+            color: var(--ink);
+            font-weight: 500;
+            font-size: 17px;
         }
 
         .gift .acc .copy-btn {
             border: 1px solid var(--line);
             background: transparent;
-            padding: 10px 14px;
+            padding: 11px 16px;
             border-radius: 999px;
             font-family: "Inter", sans-serif;
-            font-size: 10px;
-            letter-spacing: 0.2em;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--ink);
             cursor: pointer;
@@ -1323,8 +1389,8 @@
         footer .sign {
             margin-top: 30px;
             font-family: "Italiana", serif;
-            letter-spacing: 0.25em;
-            font-size: 12px;
+            letter-spacing: 0.2em;
+            font-size: 14px;
             text-transform: uppercase;
             color: var(--ink-soft);
         }
@@ -1397,7 +1463,8 @@
 
             <button class="open-btn" id="open-invite" type="button">
                 <span data-id="Buka Undangan" data-en="Open Invitation">Buka Undangan</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" aria-hidden="true">
                     <path d="M3 7 L 12 13 L 21 7 M 3 7 L 3 19 L 21 19 L 21 7 M 3 7 L 12 1 L 21 7" />
                 </svg>
             </button>
@@ -1421,8 +1488,8 @@
             <path d="M30 8 Q 34 14 32 20" opacity=".65" />
         </svg>
         <span class="track-label"
-            data-id="Everything You Are · Hindia"
-            data-en="Everything You Are · Hindia">Everything You Are · Hindia</span>
+            data-id="Sedang Diputar · Everything You Are · Hindia"
+            data-en="Now Playing · Everything You Are · Hindia">Sedang Diputar · Everything You Are · Hindia</span>
     </button>
 
     <!-- Language toggle -->
@@ -2082,13 +2149,43 @@
         const musicBtn = document.getElementById("music-toggle");
         audio.volume = 0.55;
 
+        // Eager preload — mulai download audio langsung biar siap play
+        // begitu user kasih interaction. Chrome autoplay policy butuh
+        // user gesture, tapi kalo file belum ready, play() bisa reject.
+        try { audio.load(); } catch (e) { /* silent */ }
+
+        audio.addEventListener("error", (e) => {
+            console.warn("[audio] load/play error:", e);
+        });
+        audio.addEventListener("canplaythrough", () => {
+            console.log("[audio] ready to play");
+        });
+
         function setPlaying(playing) {
             musicBtn.classList.toggle("playing", playing);
         }
 
+        let hintTimer = null;
+        function flashHint(durationMs) {
+            musicBtn.classList.add("hint");
+            clearTimeout(hintTimer);
+            hintTimer = setTimeout(() => musicBtn.classList.remove("hint"), durationMs || 4200);
+        }
+
         musicBtn.addEventListener("click", () => {
+            // First click → stop the highlight pulse (user udah notice tombolnya)
+            musicBtn.classList.remove("highlight");
+
             if (audio.paused) {
-                audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+                audio.play()
+                    .then(() => {
+                        setPlaying(true);
+                        flashHint(4500);
+                    })
+                    .catch((err) => {
+                        console.warn("[audio] play blocked:", err);
+                        setPlaying(false);
+                    });
             } else {
                 audio.pause();
                 setPlaying(false);
@@ -2097,22 +2194,21 @@
         audio.addEventListener("play", () => setPlaying(true));
         audio.addEventListener("pause", () => setPlaying(false));
 
-        document.getElementById("open-invite").addEventListener("click", () => {
+        function openInvitation() {
             splash.classList.add("gone");
             document.body.classList.remove("locked");
             setTimeout(() => { splash.style.display = "none"; }, 950);
             window.scrollTo({ top: 0, behavior: "instant" });
 
-            musicBtn.classList.add("ready");
-            audio.play().then(() => {
-                setPlaying(true);
-                musicBtn.classList.add("hint");
-                setTimeout(() => musicBtn.classList.remove("hint"), 3800);
-            }).catch(() => {
-                musicBtn.classList.add("hint");
-                setTimeout(() => musicBtn.classList.remove("hint"), 3800);
-            });
-        });
+            // Tombol musik: fade in + pulse highlight buat narik perhatian.
+            // User klik manual pertama = trigger play + tooltip
+            // "Sedang Diputar · Everything You Are · Hindia"
+            setTimeout(() => {
+                musicBtn.classList.add("ready", "highlight");
+            }, 600);
+        }
+
+        document.getElementById("open-invite").addEventListener("click", openInvitation);
 
         // -----------------------------------------------------------
         // i18n
