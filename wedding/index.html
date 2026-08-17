@@ -20,15 +20,15 @@
             --bg: #f7f1e6;
             --bg-soft: #efe6d2;
             --paper: #fbf7ee;
-            --ink: #2b251c;
-            --ink-soft: #5f574a;
-            --accent: #a68a4a;
+            --ink: #1a1610;
+            --ink-soft: #4a4235;
+            --accent: #9a7a3a;
             --accent-soft: #d9c69a;
-            --sage: #6f8069;
-            --line: #c9b98f;
+            --sage: #5f7059;
+            --line: #b8a67a;
             --line-soft: #e6dcc4;
-            --shadow: 0 20px 60px rgba(59, 53, 43, .08);
-            --shadow-soft: 0 8px 24px rgba(59, 53, 43, .05);
+            --shadow: 0 20px 60px rgba(30, 22, 12, .1);
+            --shadow-soft: 0 8px 24px rgba(30, 22, 12, .06);
         }
 
         * {
@@ -45,11 +45,15 @@
             background: var(--bg);
             color: var(--ink);
             font-family: "Cormorant Garamond", serif;
-            font-weight: 500;
-            font-size: 19px;
-            line-height: 1.65;
+            font-weight: 600;
+            font-size: 21px;
+            line-height: 1.6;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            /* Avoid grayscale antialiasing which makes text look thinner on macOS.
+               Use subpixel-antialiased (default on Windows/Linux) for maximum crispness. */
+            -webkit-font-smoothing: subpixel-antialiased;
+            -moz-osx-font-smoothing: auto;
+            text-rendering: optimizeLegibility;
             position: relative;
         }
 
@@ -70,6 +74,30 @@
             height: 100vh;
         }
 
+        body.map-open {
+            overflow: hidden;
+        }
+
+        /* Accessible focus ring — visible only for keyboard navigation.
+           Uses gold accent color agar tetap serasi tone-nya. */
+        :focus {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 2.5px solid var(--accent);
+            outline-offset: 3px;
+            border-radius: 2px;
+        }
+
+        .btn:focus-visible,
+        .splash .open-btn:focus-visible,
+        .lang-toggle button:focus-visible,
+        .music-toggle:focus-visible,
+        .rsvp .radio-group label.opt:focus-visible {
+            outline-offset: 4px;
+        }
+
         .serif {
             font-family: "Italiana", "Cormorant Garamond", serif;
             font-weight: 400;
@@ -84,10 +112,10 @@
 
         .mono {
             font-family: "Inter", sans-serif;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
             color: var(--ink-soft);
         }
 
@@ -142,8 +170,8 @@
         .splash .invite-label {
             font-family: "Inter", sans-serif;
             font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.22em;
+            font-weight: 700;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
             color: var(--ink-soft);
             margin-bottom: 20px;
@@ -163,8 +191,9 @@
 
         .splash .date {
             margin-top: 22px;
-            font-family: "Italiana", serif;
-            letter-spacing: 0.22em;
+            font-family: "Inter", sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
             font-size: 14px;
             color: var(--ink);
@@ -176,42 +205,43 @@
         }
 
         .splash .to-label {
-            font-family: "Italiana", serif;
-            letter-spacing: 0.22em;
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
             font-size: 13px;
             color: var(--ink-soft);
         }
 
         .splash .to-name {
-            margin-top: 8px;
+            margin-top: 10px;
             font-family: "Italiana", serif;
-            font-size: 26px;
-            letter-spacing: 0.03em;
+            font-size: 30px;
+            letter-spacing: 0.02em;
             color: var(--ink);
             min-height: 1.5em;
         }
 
         .splash .to-note {
-            margin-top: 10px;
-            font-weight: 500;
-            font-size: 17px;
-            color: var(--ink-soft);
+            margin-top: 12px;
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--ink);
         }
 
         .splash .open-btn {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            padding: 16px 36px;
+            padding: 18px 38px;
             background: var(--ink);
             color: var(--bg);
-            border: 1px solid var(--ink);
+            border: 1.5px solid var(--ink);
             border-radius: 999px;
             font-family: "Inter", sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.18em;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             cursor: pointer;
             transition: all .3s;
@@ -220,7 +250,7 @@
         .splash .open-btn:hover {
             background: transparent;
             color: var(--ink);
-            letter-spacing: 0.22em;
+            letter-spacing: 0.18em;
         }
 
         .splash .open-btn svg {
@@ -333,11 +363,12 @@
             transform: translate(100%, -50%);
             white-space: nowrap;
             background: var(--paper);
-            border: 1px solid var(--line);
-            padding: 8px 14px;
+            border: 1.5px solid var(--line);
+            padding: 9px 16px;
             border-radius: 999px;
-            font-family: "Italiana", serif;
-            font-size: 13px;
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--ink);
@@ -373,8 +404,8 @@
             border-radius: 999px;
             font-family: "Inter", sans-serif;
             font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
+            font-weight: 700;
+            letter-spacing: 0.08em;
             color: var(--ink-soft);
             cursor: pointer;
             transition: all .3s;
@@ -449,8 +480,8 @@
 
         .section-num .numeral {
             font-family: "Italiana", serif;
-            font-size: 20px;
-            letter-spacing: 0.28em;
+            font-size: 22px;
+            letter-spacing: 0.24em;
         }
 
         /* -------- Monogram D&A -------- */
@@ -516,10 +547,10 @@
         }
 
         p.lede {
-            font-size: clamp(18px, 1.6vw, 21px);
-            color: var(--ink-soft);
+            font-size: clamp(19px, 1.6vw, 22px);
+            color: var(--ink);
             font-weight: 500;
-            max-width: 560px;
+            max-width: 580px;
             margin: 0 auto;
         }
 
@@ -639,9 +670,9 @@
         }
 
         .couple .person .parents {
-            color: var(--ink-soft);
-            font-size: 19px;
-            font-weight: 500;
+            color: var(--ink);
+            font-size: 20px;
+            font-weight: 600;
             line-height: 1.5;
         }
 
@@ -736,8 +767,9 @@
         }
 
         .event .big-date .cell .lbl {
-            font-family: "Italiana", serif;
-            letter-spacing: 0.28em;
+            font-family: "Inter", sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
             font-size: 13px;
             color: var(--ink-soft);
@@ -763,12 +795,13 @@
         }
 
         .event .day-of-week {
-            font-family: "Italiana", serif;
-            letter-spacing: 0.35em;
+            font-family: "Inter", sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.24em;
             text-transform: uppercase;
             font-size: 14px;
-            color: var(--ink-soft);
-            margin-top: 6px;
+            color: var(--ink);
+            margin-top: 8px;
         }
 
         @media (max-width: 560px) {
@@ -798,9 +831,10 @@
         }
 
         .event .schedule .slot .time {
-            font-family: "Italiana", serif;
-            letter-spacing: 0.16em;
-            font-size: 17px;
+            font-family: "Inter", sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            font-size: 15px;
             color: var(--ink);
             text-transform: uppercase;
         }
@@ -849,11 +883,11 @@
         }
 
         .countdown .lbl {
-            margin-top: 8px;
+            margin-top: 10px;
             font-family: "Inter", sans-serif;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.16em;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--ink-soft);
         }
@@ -871,26 +905,32 @@
         }
 
         .location .venue-address {
-            color: var(--ink-soft);
-            font-weight: 500;
-            font-size: 19px;
-            margin-top: 8px;
+            color: var(--ink);
+            font-weight: 600;
+            font-size: 20px;
+            margin-top: 10px;
+            line-height: 1.5;
         }
 
-        .location .venue-3d {
+        /* ------- Map preview wrapper (inline, click to expand) ------- */
+        .location .venue-map-wrap {
+            position: relative;
             margin: 50px auto 8px;
             max-width: 620px;
             aspect-ratio: 16 / 10;
+        }
+
+        .location .venue-3d {
+            position: absolute;
+            inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            cursor: grab;
-            touch-action: none;
-        }
-
-        .location .venue-3d:active {
-            cursor: grabbing;
+            /* Preview state: no rotate cursor, no scroll capture.
+               CTA overlay ada di atas biar preview truly non-interactive. */
+            cursor: pointer;
+            touch-action: pan-y;
+            transition: box-shadow .35s ease;
         }
 
         .location .venue-3d canvas {
@@ -906,36 +946,275 @@
             opacity: .85;
         }
 
-        .location .venue-hint {
-            font-family: "Inter", sans-serif;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: var(--ink-soft);
-            margin-bottom: 40px;
-            display: inline-flex;
-            gap: 18px;
+        /* ------- Preview CTA overlay (click target on top of map) ------- */
+        .map-preview-cta {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-end;
             justify-content: center;
-            flex-wrap: wrap;
+            padding: 0 0 20px;
+            transition: background .3s ease;
         }
 
-        .location .venue-hint span {
+        .map-preview-cta:hover {
+            background: rgba(30, 22, 12, 0.12);
+        }
+
+        .map-preview-cta .cta-inner {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(30, 22, 12, 0.86);
+            color: var(--bg);
+            padding: 11px 20px;
+            border-radius: 999px;
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            box-shadow: 0 6px 18px rgba(30, 22, 12, .25);
+            backdrop-filter: blur(6px);
+            transform: translateY(0);
+            transition: transform .3s ease, background .3s ease;
+        }
+
+        .map-preview-cta:hover .cta-inner {
+            transform: translateY(-3px);
+            background: var(--accent);
+        }
+
+        .map-preview-cta .cta-icon {
+            width: 15px;
+            height: 15px;
+        }
+
+        @media (max-width: 560px) {
+            .map-preview-cta .cta-inner {
+                font-size: 11px;
+                padding: 10px 16px;
+                letter-spacing: 0.1em;
+            }
+        }
+
+        /* ------- Modal backdrop ------- */
+        .map-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            background: rgba(20, 15, 8, 0);
+            backdrop-filter: blur(0);
+            pointer-events: none;
+            transition: background .35s ease, backdrop-filter .35s ease;
+        }
+
+        body.map-open .map-backdrop {
+            background: rgba(20, 15, 8, 0.78);
+            backdrop-filter: blur(6px);
+            pointer-events: auto;
+        }
+
+        /* ------- Expanded (modal) map state ------- */
+        body.map-open .venue-map-wrap .venue-3d {
+            position: fixed;
+            inset: 3vh 3vw;
+            z-index: 1000;
+            border-radius: 8px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .5);
+            cursor: grab;
+            touch-action: none;
+        }
+
+        body.map-open .venue-map-wrap .venue-3d:active {
+            cursor: grabbing;
+        }
+
+        body.map-open .map-preview-cta {
+            display: none;
+        }
+
+        /* Slot placeholder — kasih dashed border kremy saat map "keluar" ke
+           modal, biar section flow tetep kerasa continuous */
+        body.map-open .venue-map-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--paper);
+            border: 1px dashed var(--line);
+            border-radius: 6px;
+            opacity: 0.6;
+        }
+
+        /* ------- Modal chrome (toolbar + legend) — hidden by default ------- */
+        .map-modal-chrome {
+            display: none;
+            pointer-events: none;
+        }
+
+        body.map-open .map-modal-chrome {
+            display: block;
+        }
+
+        .map-toolbar {
+            position: fixed;
+            top: calc(3vh + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1100;
+            display: flex;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        .map-toolbar .toolbar-group {
+            display: inline-flex;
+            gap: 2px;
+            background: rgba(251, 247, 238, 0.96);
+            border: 1.5px solid var(--line);
+            border-radius: 999px;
+            padding: 4px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .3);
+        }
+
+        .map-toolbar .tool-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            cursor: pointer;
+            transition: all .2s ease;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
 
-        .location .venue-hint svg {
-            width: 14px;
-            height: 14px;
+        .map-toolbar .tool-btn:hover { color: var(--ink); }
+
+        .map-toolbar .tool-btn.is-active {
+            background: var(--ink);
+            color: var(--bg);
+        }
+
+        .map-toolbar .tool-icon svg { width: 15px; height: 15px; }
+
+        .map-toolbar .tool-close { padding: 8px 10px; }
+
+        .map-toolbar .tool-close svg { width: 16px; height: 16px; }
+
+        @media (max-width: 640px) {
+            .map-toolbar {
+                top: calc(3vh + 8px);
+                gap: 6px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .map-toolbar .tool-btn {
+                padding: 7px 12px;
+                font-size: 11px;
+                letter-spacing: 0.1em;
+            }
+            .map-toolbar .tool-lbl { display: none; }
+        }
+
+        /* ------- Legend panel ------- */
+        .map-legend {
+            position: fixed;
+            bottom: calc(3vh + 12px);
+            left: 3vw;
+            z-index: 1100;
+            background: rgba(251, 247, 238, 0.97);
+            border: 1.5px solid var(--line);
+            border-radius: 8px;
+            padding: 16px 20px;
+            max-width: 280px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+            pointer-events: auto;
+        }
+
+        .map-legend .legend-title {
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin-bottom: 10px;
+        }
+
+        .map-legend .legend-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .map-legend .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--ink);
+            line-height: 1.3;
+        }
+
+        .map-legend .legend-swatch {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--paper);
+            border: 1.5px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-legend .legend-swatch svg {
+            width: 12px;
+            height: 12px;
             color: var(--accent);
+        }
+
+        .map-legend .legend-item.is-venue .legend-swatch {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .map-legend .legend-item.is-venue .legend-swatch svg {
+            color: var(--bg);
+        }
+
+        @media (max-width: 640px) {
+            .map-legend {
+                left: 3vw;
+                right: 3vw;
+                bottom: calc(3vh + 8px);
+                max-width: none;
+                padding: 12px 16px;
+            }
+            .map-legend .legend-item { font-size: 14px; }
+            .map-legend .legend-swatch { width: 20px; height: 20px; }
         }
 
         /* MapLibre GL cream overrides */
         .location .venue-3d.map-mode {
             border: 1px solid var(--line);
-            border-radius: 4px;
+            border-radius: 6px;
             overflow: hidden;
             box-shadow: var(--shadow);
             background: var(--paper);
@@ -1012,16 +1291,18 @@
         }
 
         .landmark-marker .label {
-            background: rgba(251, 247, 238, 0.94);
-            border: 1px solid var(--line);
-            padding: 5px 12px;
+            background: rgba(251, 247, 238, 0.96);
+            border: 1.5px solid var(--line);
+            padding: 6px 13px;
             border-radius: 999px;
-            font-family: "Italiana", serif;
-            font-size: 14px;
-            letter-spacing: 0.04em;
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
             color: var(--ink);
             white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(59, 53, 43, .1);
+            box-shadow: 0 2px 6px rgba(30, 22, 12, .15);
         }
 
         @media (max-width: 560px) {
@@ -1068,51 +1349,21 @@
 
         .location .actions {
             display: flex;
-            gap: 20px;
             justify-content: center;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .location .qr {
-            background: #fff;
-            padding: 14px;
-            border: 1px solid var(--line);
-            border-radius: 4px;
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            box-shadow: var(--shadow);
-        }
-
-        .location .qr img {
-            width: 160px;
-            height: 160px;
-            display: block;
-        }
-
-        .location .qr .qr-lbl {
-            font-family: "Inter", sans-serif;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: var(--ink-soft);
+            margin-top: 30px;
         }
 
         .btn {
             display: inline-block;
-            padding: 15px 32px;
+            padding: 16px 34px;
             background: var(--ink);
             color: var(--bg);
             border: 1px solid var(--ink);
             border-radius: 999px;
             font-family: "Inter", sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.16em;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             text-decoration: none;
             cursor: pointer;
@@ -1146,12 +1397,12 @@
         .rsvp label {
             display: block;
             font-family: "Inter", sans-serif;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.14em;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: var(--ink-soft);
-            margin-bottom: 8px;
+            color: var(--ink);
+            margin-bottom: 10px;
         }
 
         .rsvp input[type="text"],
@@ -1159,12 +1410,12 @@
         .rsvp select {
             width: 100%;
             border: none;
-            border-bottom: 1px solid var(--line);
+            border-bottom: 1.5px solid var(--line);
             background: transparent;
-            padding: 10px 2px;
+            padding: 12px 2px;
             font-family: "Cormorant Garamond", serif;
-            font-size: 19px;
-            font-weight: 500;
+            font-size: 20px;
+            font-weight: 600;
             color: var(--ink);
             outline: none;
             transition: border-color .2s;
@@ -1181,7 +1432,7 @@
             min-height: 120px;
             resize: vertical;
             font-family: "Cormorant Garamond", serif;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .rsvp .radio-group {
@@ -1193,14 +1444,15 @@
         .rsvp .radio-group label.opt {
             flex: 1;
             min-width: 130px;
-            border: 1px solid var(--line);
-            padding: 12px 16px;
+            border: 1.5px solid var(--line);
+            padding: 13px 18px;
             border-radius: 999px;
             text-align: center;
             cursor: pointer;
-            font-family: "Italiana", serif;
-            font-size: 16px;
-            letter-spacing: 0.12em;
+            font-family: "Inter", sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--ink-soft);
             margin-bottom: 0;
@@ -1260,18 +1512,22 @@
         .wish .meta {
             font-family: "Inter", sans-serif;
             font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.12em;
+            font-weight: 600;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--ink-soft);
-            margin-top: 4px;
+            margin-top: 5px;
         }
 
         .wish .msg {
-            margin-top: 10px;
+            margin-top: 12px;
             font-weight: 500;
             color: var(--ink);
-            font-size: 19px;
+            font-size: 20px;
+        }
+
+        .wish .who {
+            font-weight: 600;
         }
 
         .wishes-empty {
@@ -1279,90 +1535,30 @@
             color: var(--ink-soft);
             font-weight: 500;
             margin-top: 20px;
+            font-size: 18px;
         }
 
-        /* -------- Gift -------- */
-        .gift {
+        /* -------- Gift Note (soft "presence is the gift" section) -------- */
+        .gift-note {
             background: var(--bg-soft);
+            text-align: center;
         }
 
-        .gift .accounts {
-            display: grid;
-            gap: 18px;
-            max-width: 520px;
-            margin: 40px auto 0;
-        }
-
-        .gift .acc {
-            background: #fff;
-            border: 1px solid var(--line);
-            border-radius: 4px;
-            padding: 26px 28px;
+        .gift-note .gift-note-flourish {
             display: flex;
-            align-items: center;
-            gap: 20px;
-            text-align: left;
+            justify-content: center;
+            margin: 24px auto 20px;
+            color: var(--accent);
         }
 
-        .gift .acc .info {
-            flex: 1;
+        .gift-note .gift-note-flourish svg {
+            width: clamp(120px, 20vw, 180px);
+            height: auto;
         }
 
-        .gift .acc .bank {
-            font-family: "Inter", sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: var(--ink-soft);
-        }
-
-        .gift .acc .num {
-            font-family: "Italiana", serif;
-            font-size: 24px;
-            letter-spacing: 0.06em;
-            margin: 4px 0;
-        }
-
-        .gift .acc .holder {
-            color: var(--ink);
-            font-weight: 500;
-            font-size: 17px;
-        }
-
-        .gift .acc .copy-btn {
-            border: 1px solid var(--line);
-            background: transparent;
-            padding: 11px 16px;
-            border-radius: 999px;
-            font-family: "Inter", sans-serif;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--ink);
-            cursor: pointer;
-            transition: all .2s;
-            white-space: nowrap;
-        }
-
-        .gift .acc .copy-btn:hover {
-            background: var(--ink);
-            color: var(--bg);
-            border-color: var(--ink);
-        }
-
-        .gift .acc .copy-btn.copied {
-            background: var(--sage);
-            color: #fff;
-            border-color: var(--sage);
-        }
-
-        @media (max-width: 520px) {
-            .gift .acc {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        .gift-note .lede {
+            max-width: 620px;
+            font-style: normal;
         }
 
         /* -------- Footer -------- */
@@ -1388,8 +1584,9 @@
 
         footer .sign {
             margin-top: 30px;
-            font-family: "Italiana", serif;
-            letter-spacing: 0.2em;
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.16em;
             font-size: 14px;
             text-transform: uppercase;
             color: var(--ink-soft);
@@ -1828,36 +2025,72 @@
                 Jl. Contoh Alamat No. 1, Jakarta — mohon disesuaikan
             </div>
 
-            <!-- Interactive 3D venue -->
-            <div class="venue-3d" id="venue-3d" role="img"
-                aria-label="Interactive 3D outline of the wedding venue"></div>
+            <!-- Interactive 3D venue map — preview state, opens fullscreen modal on click -->
+            <div class="venue-map-wrap" id="venue-map-wrap">
+                <div class="venue-3d" id="venue-3d" role="img"
+                    aria-label="Interactive 3D outline of the wedding venue"></div>
 
-            <div class="venue-hint" aria-hidden="true">
-                <span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round">
-                        <path d="M12 4 L 12 20 M 4 12 L 20 12" />
-                        <path d="M8 8 L 4 12 L 8 16 M 16 8 L 20 12 L 16 16" />
-                    </svg>
-                    <span data-id="Geser untuk memutar" data-en="Drag to rotate">Geser untuk memutar</span>
-                </span>
-                <span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round">
-                        <circle cx="11" cy="11" r="7" />
-                        <path d="M11 8 L 11 14 M 8 11 L 14 11" />
-                        <path d="M16 16 L 21 21" />
-                    </svg>
-                    <span data-id="Scroll untuk zoom" data-en="Scroll to zoom">Scroll untuk zoom</span>
-                </span>
+                <!-- Preview overlay: prompts click to enter modal -->
+                <button class="map-preview-cta" id="map-preview-cta" type="button"
+                    aria-label="Buka peta interaktif">
+                    <span class="cta-inner">
+                        <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <path d="M15 3 h6 v6" />
+                            <path d="M9 21 H3 v-6" />
+                            <path d="M21 3 L14 10" />
+                            <path d="M3 21 L10 14" />
+                        </svg>
+                        <span class="cta-text"
+                            data-id="Ketuk untuk buka peta interaktif"
+                            data-en="Tap to open interactive map">Ketuk untuk buka peta interaktif</span>
+                    </span>
+                </button>
+
+                <!-- Modal toolbar (visible only when expanded) -->
+                <div class="map-modal-chrome" aria-hidden="true">
+                    <div class="map-toolbar">
+                        <div class="toolbar-group">
+                            <button type="button" class="tool-btn tool-mode is-active" id="map-mode-3d"
+                                data-id="3D" data-en="3D" aria-pressed="true">3D</button>
+                            <button type="button" class="tool-btn tool-mode" id="map-mode-2d"
+                                data-id="2D" data-en="2D" aria-pressed="false">2D</button>
+                        </div>
+                        <div class="toolbar-group">
+                            <button type="button" class="tool-btn tool-icon" id="map-reset"
+                                title="Reset view" aria-label="Reset view">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 12 A9 9 0 1 0 6 5.3" />
+                                    <path d="M3 4 v5 h5" />
+                                </svg>
+                                <span class="tool-lbl"
+                                    data-id="Reset" data-en="Reset">Reset</span>
+                            </button>
+                            <button type="button" class="tool-btn tool-icon tool-close" id="map-close"
+                                title="Tutup" aria-label="Tutup peta">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 6 L 18 18 M 18 6 L 6 18" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="map-legend" id="map-legend">
+                        <div class="legend-title"
+                            data-id="Keterangan" data-en="Legend">Keterangan</div>
+                        <ul class="legend-list" id="map-legend-list"></ul>
+                    </div>
+                </div>
             </div>
 
-            <div class="actions">
-                <div class="qr">
-                    <img id="qr-img" src="" alt="QR Code menuju Google Maps" />
-                    <div class="qr-lbl" data-id="Scan untuk peta" data-en="Scan for map">Scan untuk peta</div>
-                </div>
+            <!-- Backdrop untuk modal map -->
+            <div class="map-backdrop" id="map-backdrop" aria-hidden="true"></div>
 
+            <div class="actions">
                 <a class="btn" id="maps-link" href="#" target="_blank" rel="noopener"
                     data-id="Buka di Google Maps" data-en="Open in Google Maps">Buka di Google Maps</a>
             </div>
@@ -1932,45 +2165,33 @@
         </div>
     </section>
 
-    <!-- ============ GIFT / AMPLOP DIGITAL ============ -->
-    <section class="gift">
+    <!-- ============ GIFT NOTE (no digital envelope, physical only) ============ -->
+    <section class="gift-note">
         <div class="container reveal">
             <div class="section-num" aria-hidden="true">
                 <span class="line"></span>
                 <span class="numeral">V</span>
                 <span class="line"></span>
             </div>
-            <span class="mono eyebrow" data-id="Kado & Amplop Digital" data-en="Digital Envelope">Kado &amp; Amplop Digital</span>
-            <h2 class="serif" data-id="Wedding Gift" data-en="Wedding Gift">Wedding Gift</h2>
-            <p class="lede"
-                data-id="Bagi keluarga & sahabat yang berkenan memberikan tanda kasih, dapat melalui rekening berikut."
-                data-en="For those who wish to send a token of love, our accounts are available below.">
-                Bagi keluarga & sahabat yang berkenan memberikan tanda kasih, dapat melalui rekening berikut.
-            </p>
+            <span class="mono eyebrow" data-id="Sebuah Catatan" data-en="A Note">Sebuah Catatan</span>
+            <h2 class="serif" data-id="Kehadiran Anda Adalah Hadiah Terbaik"
+                data-en="Your Presence Is The Greatest Gift">Kehadiran Anda Adalah Hadiah Terbaik</h2>
 
-            <div class="accounts">
-                <div class="acc">
-                    <div class="info">
-                        <div class="bank">BCA</div>
-                        <div class="num" data-copy="1234567890">1234 5678 90</div>
-                        <div class="holder">a.n. Daffa Shafwan</div>
-                    </div>
-                    <button class="copy-btn" type="button"
-                        data-id="Salin" data-en="Copy"
-                        data-id-copied="Tersalin" data-en-copied="Copied">Salin</button>
-                </div>
-
-                <div class="acc">
-                    <div class="info">
-                        <div class="bank">BSI</div>
-                        <div class="num" data-copy="0987654321">0987 6543 21</div>
-                        <div class="holder">a.n. Atikah Nuranini</div>
-                    </div>
-                    <button class="copy-btn" type="button"
-                        data-id="Salin" data-en="Copy"
-                        data-id-copied="Tersalin" data-en-copied="Copied">Salin</button>
-                </div>
+            <div class="gift-note-flourish" aria-hidden="true">
+                <svg viewBox="0 0 120 40" fill="none" stroke="currentColor" stroke-width="1.2"
+                    stroke-linecap="round">
+                    <path d="M2 20 H 46" />
+                    <path d="M74 20 H 118" />
+                    <path
+                        d="M52 20 C 55 12, 65 12, 68 20 C 65 28, 55 28, 52 20 Z M56 20 C 58 16, 62 16, 64 20 C 62 24, 58 24, 56 20 Z" />
+                </svg>
             </div>
+
+            <p class="lede"
+                data-id="Doa restu dan senyum kalian sudah lebih dari cukup untuk memulai babak baru ini. Bagi yang berkenan memberikan tanda kasih, sebuah kotak hadiah akan tersedia di lokasi acara."
+                data-en="Your prayers and warm smiles are more than enough to bless the beginning of our next chapter. For those who wish to give, a gift box will be provided at the venue.">
+                Doa restu dan senyum kalian sudah lebih dari cukup untuk memulai babak baru ini. Bagi yang berkenan memberikan tanda kasih, sebuah kotak hadiah akan tersedia di lokasi acara.
+            </p>
         </div>
     </section>
 
@@ -2062,12 +2283,12 @@
         // Kalau di-set null, section peta akan menampilkan placeholder.
         // -----------------------------------------------------------
         const CONFIG = {
-            weddingDate: "2026-10-10T09:00:00+07:00",
+            weddingDate: "2026-09-11T08:00:00+07:00",
             venue: {
                 nameId: "Kediaman Mempelai",
-                nameEn: "The Family Residence",
-                addressId: "Jl. Contoh Alamat No. 1, Jakarta — mohon disesuaikan",
-                addressEn: "Please update with the exact address",
+                nameEn: "The Family Residence of Daffa & Atikah",
+                addressId: "Desa Sarirogo, Kecamatan Sidoarjo, Kabupaten Sidoarjo, Jawa Timur",
+                addressEn: "Desa Sarirogo, Kecamatan Sidoarjo, Kabupaten Sidoarjo, Jawa Timur",
                 coordinates: { lat: -7.4305848, lng: 112.6783165 },
                 mapZoom: 19,
                 // Polygon plot venue (GeoJSON). Diextrude jadi bangunan 3D
@@ -2288,10 +2509,6 @@
         // -----------------------------------------------------------
         const mapsUrl = CONFIG.venue.mapsUrl;
         document.getElementById("maps-link").setAttribute("href", mapsUrl);
-        document.getElementById("qr-img").setAttribute(
-            "src",
-            "https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=8&data=" + encodeURIComponent(mapsUrl)
-        );
 
         // -----------------------------------------------------------
         // RSVP radio custom styling
@@ -2367,33 +2584,6 @@
             s.style.display = "block";
             setTimeout(() => { s.style.display = "none"; }, 3500);
             renderWishes();
-        });
-
-        // -----------------------------------------------------------
-        // Copy account number
-        // -----------------------------------------------------------
-        document.querySelectorAll(".gift .copy-btn").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                const num = btn.closest(".acc").querySelector(".num").getAttribute("data-copy");
-                try {
-                    await navigator.clipboard.writeText(num);
-                } catch {
-                    const ta = document.createElement("textarea");
-                    ta.value = num;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    try { document.execCommand("copy"); } catch { }
-                    document.body.removeChild(ta);
-                }
-                const originalText = btn.getAttribute("data-" + currentLang);
-                const copiedText = btn.getAttribute("data-" + currentLang + "-copied");
-                btn.textContent = copiedText;
-                btn.classList.add("copied");
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.classList.remove("copied");
-                }, 1800);
-            });
         });
 
         // -----------------------------------------------------------
@@ -2590,6 +2780,10 @@
                 // ==============================================================
                 // Landmark markers (icon dot + pill label)
                 // ==============================================================
+                // NOTE: LANDMARK_ICONS also digunakan buat build legend nanti,
+                // jadi kita expose lewat closure — sengaja pake const yang di-hoist
+                // ke atas via IIFE-scope reference. Di sini tetap declared local
+                // krn hanya referenced setelah on-load selesai.
                 const LANDMARK_ICONS = {
                     stadium:
                         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' +
@@ -2714,6 +2908,167 @@
                         if (rotating) requestAnimationFrame(rotate);
                     });
                 }, 2200);
+
+                // ==============================================================
+                // MODAL / FULLSCREEN EXPAND — click preview → open interactive
+                // ==============================================================
+                const ctaBtn = document.getElementById("map-preview-cta");
+                const closeBtn = document.getElementById("map-close");
+                const resetBtn = document.getElementById("map-reset");
+                const mode3DBtn = document.getElementById("map-mode-3d");
+                const mode2DBtn = document.getElementById("map-mode-2d");
+                const backdrop = document.getElementById("map-backdrop");
+                const legendList = document.getElementById("map-legend-list");
+
+                const DEFAULT_PITCH = 62;
+                const DEFAULT_BEARING = -22;
+                let isOpen = false;
+                let currentMode = "3d";
+
+                function openModal() {
+                    if (isOpen) return;
+                    isOpen = true;
+                    document.body.classList.add("map-open");
+                    // Kasih transition selesai dulu, baru trigger map resize
+                    // biar canvas match ke ukuran fullscreen baru.
+                    const settle = () => {
+                        map.resize();
+                        // Reset ke 3D default & fly ke venue biar user langsung
+                        // dapet "wow" view pas modal kebuka.
+                        map.flyTo({
+                            center: mapCenter,
+                            zoom: (CONFIG.venue.mapZoom || 19),
+                            pitch: DEFAULT_PITCH,
+                            bearing: DEFAULT_BEARING,
+                            duration: 900,
+                            essential: true
+                        });
+                    };
+                    setTimeout(settle, 380);
+                }
+
+                function closeModal() {
+                    if (!isOpen) return;
+                    isOpen = false;
+                    document.body.classList.remove("map-open");
+                    // Reset ke 3D mode kalo user sempet ke 2D
+                    if (currentMode !== "3d") setMapMode("3d", false);
+                    setTimeout(() => { map.resize(); }, 380);
+                }
+
+                function setMapMode(mode, animate = true) {
+                    if (mode === currentMode) return;
+                    currentMode = mode;
+                    mode3DBtn.classList.toggle("is-active", mode === "3d");
+                    mode2DBtn.classList.toggle("is-active", mode === "2d");
+                    mode3DBtn.setAttribute("aria-pressed", mode === "3d");
+                    mode2DBtn.setAttribute("aria-pressed", mode === "2d");
+
+                    const duration = animate ? 700 : 0;
+
+                    if (mode === "2d") {
+                        map.easeTo({ pitch: 0, bearing: 0, duration });
+                        if (map.getLayer("3d-buildings")) {
+                            map.setLayoutProperty("3d-buildings", "visibility", "none");
+                        }
+                        if (map.getLayer("venue-plot-extrusion")) {
+                            map.setLayoutProperty("venue-plot-extrusion", "visibility", "none");
+                        }
+                        if (map.getLayer("venue-plot-roof")) {
+                            map.setLayoutProperty("venue-plot-roof", "visibility", "none");
+                        }
+                        // Emphasize plot fill lebih tegas pas flat mode
+                        if (map.getLayer("venue-plot-fill")) {
+                            map.setPaintProperty("venue-plot-fill", "fill-opacity", 0.55);
+                        }
+                        // Matikan auto-rotate di 2D
+                        rotating = false;
+                    } else {
+                        map.easeTo({
+                            pitch: DEFAULT_PITCH,
+                            bearing: DEFAULT_BEARING,
+                            duration
+                        });
+                        if (map.getLayer("3d-buildings")) {
+                            map.setLayoutProperty("3d-buildings", "visibility", "visible");
+                        }
+                        if (map.getLayer("venue-plot-extrusion")) {
+                            map.setLayoutProperty("venue-plot-extrusion", "visibility", "visible");
+                        }
+                        if (map.getLayer("venue-plot-roof")) {
+                            map.setLayoutProperty("venue-plot-roof", "visibility", "visible");
+                        }
+                        if (map.getLayer("venue-plot-fill")) {
+                            map.setPaintProperty("venue-plot-fill", "fill-opacity", 0.18);
+                        }
+                    }
+                }
+
+                function resetView() {
+                    map.flyTo({
+                        center: mapCenter,
+                        zoom: (CONFIG.venue.mapZoom || 19),
+                        pitch: currentMode === "2d" ? 0 : DEFAULT_PITCH,
+                        bearing: currentMode === "2d" ? 0 : DEFAULT_BEARING,
+                        duration: 1400,
+                        essential: true,
+                        curve: 1.5
+                    });
+                }
+
+                if (ctaBtn) ctaBtn.addEventListener("click", openModal);
+                if (closeBtn) closeBtn.addEventListener("click", closeModal);
+                if (resetBtn) resetBtn.addEventListener("click", resetView);
+                if (mode3DBtn) mode3DBtn.addEventListener("click", () => setMapMode("3d"));
+                if (mode2DBtn) mode2DBtn.addEventListener("click", () => setMapMode("2d"));
+                if (backdrop) backdrop.addEventListener("click", closeModal);
+
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape" && isOpen) closeModal();
+                });
+
+                // ==============================================================
+                // Legend build — venue + landmarks dengan icon & label bilingual
+                // ==============================================================
+                const VENUE_PIN_ICON =
+                    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+                    '<path d="M12 2 C 7.5 2, 4 5.5, 4 10 C 4 16, 12 22, 12 22 S 20 16, 20 10 C 20 5.5, 16.5 2, 12 2 Z M 12 12.5 A 2.5 2.5 0 1 1 12 7.5 A 2.5 2.5 0 0 1 12 12.5 Z" />' +
+                    '</svg>';
+
+                if (legendList) {
+                    const items = [];
+                    items.push({
+                        type: "venue",
+                        icon: VENUE_PIN_ICON,
+                        labelId: CONFIG.venue.nameId || "Lokasi Acara",
+                        labelEn: CONFIG.venue.nameEn || "Venue"
+                    });
+                    (CONFIG.venue.landmarks || []).forEach(lm => {
+                        items.push({
+                            type: "landmark",
+                            icon: LANDMARK_ICONS[lm.icon] || LANDMARK_ICONS.office,
+                            labelId: lm.nameId || lm.nameEn || "",
+                            labelEn: lm.nameEn || lm.nameId || ""
+                        });
+                    });
+
+                    legendList.innerHTML = items.map(item =>
+                        '<li class="legend-item is-' + item.type + '">' +
+                        '<span class="legend-swatch">' + item.icon + '</span>' +
+                        '<span class="legend-label"' +
+                        ' data-id="' + item.labelId.replace(/"/g, "&quot;") + '"' +
+                        ' data-en="' + item.labelEn.replace(/"/g, "&quot;") + '">' +
+                        item.labelId +
+                        '</span>' +
+                        '</li>'
+                    ).join("");
+
+                    // Re-apply language ke legend items yang baru dirender
+                    try {
+                        const savedLang = localStorage.getItem("wedding.lang") || "id";
+                        if (typeof applyLang === "function") applyLang(savedLang);
+                    } catch (e) { /* silent */ }
+                }
             });
 
             map.on("error", (e) => {
