@@ -2412,7 +2412,12 @@
                 setPlaying(false);
             }
         });
-        audio.addEventListener("play", () => setPlaying(true));
+        audio.addEventListener("play", () => {
+            setPlaying(true);
+            // Auto-clear pulse highlight kalo lagu udah beneran jalan
+            // (misal via autoplay dari klik "Buka Undangan")
+            musicBtn.classList.remove("highlight");
+        });
         audio.addEventListener("pause", () => setPlaying(false));
 
         function openInvitation() {
@@ -2421,9 +2426,29 @@
             setTimeout(() => { splash.style.display = "none"; }, 950);
             window.scrollTo({ top: 0, behavior: "instant" });
 
-            // Tombol musik: fade in + pulse highlight buat narik perhatian.
-            // User klik manual pertama = trigger play + tooltip
-            // "Sedang Diputar · Everything You Are · Hindia"
+            // Klik "Buka Undangan" = valid user gesture buat browser
+            // autoplay policy. Trigger audio.play() langsung di sini biar
+            // lagu mulai bareng splash close (tanpa perlu klik 2x).
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        // Tooltip "Sedang Diputar..." muncul singkat pas
+                        // tombol musik udah fade-in di viewport
+                        setTimeout(() => flashHint(5000), 900);
+                    })
+                    .catch((err) => {
+                        // Autoplay masih di-block (rare kalau ini dipanggil
+                        // langsung dari click handler). Fallback: highlight
+                        // tombol biar user tau harus klik manual.
+                        console.warn("[audio] autoplay blocked:", err);
+                    });
+            }
+
+            // Tombol musik: fade in + pulse highlight.
+            // Kalau play sukses, pulse hilang begitu user notice/klik tombol
+            // (auto-remove di handler musicBtn). Kalau di-block, pulse jadi
+            // sinyal buat user klik manual.
             setTimeout(() => {
                 musicBtn.classList.add("ready", "highlight");
             }, 600);
