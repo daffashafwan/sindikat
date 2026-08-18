@@ -1625,28 +1625,302 @@
             color: var(--ink-soft);
         }
 
-        /* -------- Fade-in on scroll -------- */
-        .reveal {
+        /* =========================================================
+           MOTION SYSTEM
+           - .reveal              → base fade + slide-up (default)
+           - .reveal-scale        → fade + scale-up (dramatic entrance)
+           - .reveal-left/right   → fade + slide from side (asymmetric)
+           - .reveal-blur         → fade + defocus lift (elegant)
+           - .reveal-stagger      → children fade in staggered
+           - Ambient animations   → subtle continuous motion on
+             decorative elements (ornaments, section lines, watermark)
+           - All motion respects prefers-reduced-motion
+           ========================================================= */
+
+        .reveal,
+        .reveal-scale,
+        .reveal-left,
+        .reveal-right,
+        .reveal-blur {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity .9s ease, transform .9s ease;
+            transition:
+                opacity 1s cubic-bezier(0.2, 0.7, 0.3, 1),
+                transform 1s cubic-bezier(0.2, 0.7, 0.3, 1),
+                filter 1s ease;
         }
 
-        .reveal.in {
+        .reveal { transform: translateY(28px); }
+        .reveal-scale { transform: scale(0.92); }
+        .reveal-left { transform: translateX(-40px); }
+        .reveal-right { transform: translateX(40px); }
+        .reveal-blur { filter: blur(10px); transform: translateY(16px); }
+
+        .reveal.in,
+        .reveal-scale.in,
+        .reveal-left.in,
+        .reveal-right.in,
+        .reveal-blur.in {
+            opacity: 1;
+            transform: none;
+            filter: none;
+        }
+
+        /* Stagger children — hidden until parent is "in", then reveal
+           di urutan dengan delay bertahap */
+        .reveal-stagger > * {
+            opacity: 0;
+            transform: translateY(24px);
+            transition:
+                opacity .9s cubic-bezier(0.2, 0.7, 0.3, 1),
+                transform .9s cubic-bezier(0.2, 0.7, 0.3, 1);
+        }
+
+        .reveal-stagger.in > * {
             opacity: 1;
             transform: none;
         }
 
+        .reveal-stagger.in > *:nth-child(1) { transition-delay: 0.05s; }
+        .reveal-stagger.in > *:nth-child(2) { transition-delay: 0.14s; }
+        .reveal-stagger.in > *:nth-child(3) { transition-delay: 0.23s; }
+        .reveal-stagger.in > *:nth-child(4) { transition-delay: 0.32s; }
+        .reveal-stagger.in > *:nth-child(5) { transition-delay: 0.41s; }
+        .reveal-stagger.in > *:nth-child(6) { transition-delay: 0.50s; }
+        .reveal-stagger.in > *:nth-child(7) { transition-delay: 0.59s; }
+        .reveal-stagger.in > *:nth-child(8) { transition-delay: 0.68s; }
+        .reveal-stagger.in > *:nth-child(9) { transition-delay: 0.77s; }
+
+        /* ---------- Ambient continuous animations ---------- */
+
+        /* Corner ornaments: gentle sway (breathing effect) */
+        @keyframes ornBreathe {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.55; }
+            50%      { transform: translate(0, -6px) rotate(0.4deg); opacity: 0.7; }
+        }
+        .corner-orn { animation: ornBreathe 9s ease-in-out infinite; }
+        .corner-orn.tl { animation-delay: 0s; }
+        .corner-orn.tr {
+            animation: ornBreatheFlipX 10s ease-in-out infinite;
+            animation-delay: -2s;
+        }
+        .corner-orn.bl {
+            animation: ornBreatheFlipY 11s ease-in-out infinite;
+            animation-delay: -4s;
+        }
+        .corner-orn.br {
+            animation: ornBreatheFlipXY 9.5s ease-in-out infinite;
+            animation-delay: -6s;
+        }
+
+        /* Flip variants supaya transform tetap ke-preserve orientasinya */
+        @keyframes ornBreatheFlipX {
+            0%, 100% { transform: scaleX(-1) translate(0, 0); opacity: 0.55; }
+            50%      { transform: scaleX(-1) translate(0, -6px); opacity: 0.7; }
+        }
+        @keyframes ornBreatheFlipY {
+            0%, 100% { transform: scaleY(-1) translate(0, 0); opacity: 0.55; }
+            50%      { transform: scaleY(-1) translate(0, 6px); opacity: 0.7; }
+        }
+        @keyframes ornBreatheFlipXY {
+            0%, 100% { transform: scale(-1, -1) translate(0, 0); opacity: 0.55; }
+            50%      { transform: scale(-1, -1) translate(0, 6px); opacity: 0.7; }
+        }
+
+        /* Hero watermark: slow drift for depth */
+        @keyframes watermarkDrift {
+            0%, 100% { transform: translateY(-2%) translateX(0); }
+            50%      { transform: translateY(-3.2%) translateX(-0.8%); }
+        }
+        .hero-watermark span {
+            animation: watermarkDrift 22s ease-in-out infinite;
+        }
+
+        /* Section num lines: shimmer opacity */
+        @keyframes lineShimmer {
+            0%, 100% { opacity: 0.4; }
+            50%      { opacity: 0.85; }
+        }
+        .section-num .line { animation: lineShimmer 4.5s ease-in-out infinite; }
+        .section-num .line:last-child { animation-delay: -2.2s; }
+
+        /* Monogram: gentle float on hero */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-5px); }
+        }
+        .hero .monogram { animation: float 6s ease-in-out infinite; }
+
+        /* Event card flourish (icon on top): breathing */
+        @keyframes flourishBreathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50%      { transform: translate(-50%, -50%) scale(1.06); }
+        }
+        .event .card .flourish { animation: flourishBreathe 5s ease-in-out infinite; }
+
+        /* Gift-note flourish: subtle sway */
+        @keyframes flourishSway {
+            0%, 100% { transform: rotate(0deg); }
+            50%      { transform: rotate(1.5deg); }
+        }
+        .gift-note .gift-note-flourish svg { animation: flourishSway 8s ease-in-out infinite; }
+
+        /* ---------- Special entrance animations ---------- */
+
+        /* NOTE — Semua selector .container.in dipilih supaya animasi
+           fire terlepas dari variant reveal (base, -scale, -blur) yang
+           dipake tiap section, karena kelas .in di-toggle di container
+           yang sama. */
+
+        /* Section numeral: typographic draw-in (wide letter-spacing → normal) */
+        @keyframes numeralDrawIn {
+            0% {
+                opacity: 0;
+                letter-spacing: 0.8em;
+                transform: translateY(-6px);
+            }
+            60% {
+                opacity: 1;
+                letter-spacing: 0.24em;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 1;
+                letter-spacing: 0.24em;
+            }
+        }
+        .container.in .section-num .numeral {
+            animation: numeralDrawIn 1.2s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        /* Big date numbers: bounce-scale stagger */
+        @keyframes bigDateIn {
+            0%   { opacity: 0; transform: scale(0.4) translateY(30px); }
+            60%  { opacity: 1; transform: scale(1.05) translateY(0); }
+            100% { transform: scale(1); }
+        }
+        .event .container.in .big-date .cell .val {
+            animation: bigDateIn 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .event .container.in .big-date .cell:nth-child(1) .val { animation-delay: 0.3s; }
+        .event .container.in .big-date .cell:nth-child(3) .val { animation-delay: 0.5s; }
+        .event .container.in .big-date .cell:nth-child(5) .val { animation-delay: 0.7s; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .event .container.in .big-date .sep {
+            animation: fadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .event .container.in .big-date .sep:nth-child(2) { animation-delay: 0.4s; }
+        .event .container.in .big-date .sep:nth-child(4) { animation-delay: 0.6s; }
+
+        /* Countdown cells: pop-in stagger */
+        @keyframes cellPopIn {
+            0%   { opacity: 0; transform: scale(0.7) translateY(20px); }
+            70%  { opacity: 1; transform: scale(1.04) translateY(0); }
+            100% { transform: scale(1); }
+        }
+        .countdown .container.in .cell {
+            animation: cellPopIn 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .countdown .container.in .cell:nth-child(1) { animation-delay: 0.15s; }
+        .countdown .container.in .cell:nth-child(2) { animation-delay: 0.28s; }
+        .countdown .container.in .cell:nth-child(3) { animation-delay: 0.41s; }
+        .countdown .container.in .cell:nth-child(4) { animation-delay: 0.54s; }
+
+        /* Couple names: slide from left + right (asymmetric elegance) */
+        @keyframes slideRight {
+            from { opacity: 0; transform: translateX(-40px); }
+            to   { opacity: 1; transform: none; }
+        }
+        @keyframes slideLeft {
+            from { opacity: 0; transform: translateX(40px); }
+            to   { opacity: 1; transform: none; }
+        }
+        @keyframes fadeScale {
+            from { opacity: 0; transform: scale(0.6); }
+            to   { opacity: 1; transform: none; }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        .couple .container.in .grid > .person:first-child .name {
+            animation: slideRight 1s .2s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+        }
+        .couple .container.in .grid > .and {
+            animation: fadeScale 1.1s .5s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .couple .container.in .grid > .person:last-child .name {
+            animation: slideLeft 1s .35s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+        }
+        .couple .container.in .grid > .person .parents {
+            animation: fadeUp 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+        }
+        .couple .container.in .grid > .person:first-child .parents { animation-delay: 0.55s; }
+        .couple .container.in .grid > .person:last-child .parents  { animation-delay: 0.65s; }
+
+        /* Person card hover: subtle lift */
+        .couple .person {
+            transition: transform .35s ease;
+        }
+        .couple .person:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Map preview: continuous soft glow to indicate interactivity */
+        @keyframes mapGlow {
+            0%, 100% { box-shadow: var(--shadow); }
+            50%      { box-shadow: var(--shadow), 0 0 32px rgba(154, 122, 58, 0.18); }
+        }
+        .location .container.in .venue-3d.map-mode {
+            animation: mapGlow 4.5s ease-in-out infinite 1.5s;
+        }
+
+        /* RSVP submit button: subtle continuous pulse to draw attention */
+        @keyframes btnPulse {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-2px); }
+        }
+        .rsvp button[type="submit"]:not(:hover) {
+            animation: btnPulse 3.5s ease-in-out infinite;
+        }
+
+        /* Reduce all motion when user prefers */
         @media (prefers-reduced-motion: reduce) {
-            .reveal {
+            .reveal,
+            .reveal-scale,
+            .reveal-left,
+            .reveal-right,
+            .reveal-blur,
+            .reveal-stagger > * {
                 opacity: 1;
                 transform: none;
+                filter: none;
                 transition: none;
+                animation: none !important;
             }
 
-            html {
-                scroll-behavior: auto;
+            .corner-orn,
+            .hero-watermark span,
+            .section-num .line,
+            .hero .monogram,
+            .event .card .flourish,
+            .gift-note .gift-note-flourish svg,
+            .rsvp button[type="submit"],
+            .reveal.in .section-num .numeral,
+            .reveal.in .event .big-date .cell .val,
+            .reveal.in .event .big-date .sep,
+            .reveal.in .countdown .cell,
+            .reveal.in .couple .grid > .person .name,
+            .reveal.in .couple .grid > .and,
+            .reveal.in .couple .grid > .person .parents,
+            .reveal.in .location .venue-3d.map-mode {
+                animation: none !important;
+                transform: none;
             }
+
+            html { scroll-behavior: auto; }
         }
     </style>
 </head>
@@ -1893,7 +2167,7 @@
 
     <!-- ============ EVENT ============ -->
     <section class="event">
-        <div class="container reveal">
+        <div class="container reveal-scale">
             <div class="section-num" aria-hidden="true">
                 <span class="line"></span>
                 <span class="numeral">II</span>
@@ -2044,7 +2318,7 @@
 
     <!-- ============ LOCATION ============ -->
     <section class="location">
-        <div class="container reveal">
+        <div class="container reveal-blur">
             <div class="section-num" aria-hidden="true">
                 <span class="line"></span>
                 <span class="numeral">III</span>
@@ -2202,7 +2476,7 @@
 
     <!-- ============ GIFT NOTE (no digital envelope, physical only) ============ -->
     <section class="gift-note">
-        <div class="container reveal">
+        <div class="container reveal-scale">
             <div class="section-num" aria-hidden="true">
                 <span class="line"></span>
                 <span class="numeral">V</span>
@@ -2727,7 +3001,8 @@
         });
 
         // -----------------------------------------------------------
-        // Reveal on scroll
+        // Reveal on scroll — supports .reveal, .reveal-scale, .reveal-left,
+        // .reveal-right, .reveal-blur, .reveal-stagger
         // -----------------------------------------------------------
         const io = new IntersectionObserver((entries) => {
             entries.forEach(e => {
@@ -2736,8 +3011,10 @@
                     io.unobserve(e.target);
                 }
             });
-        }, { threshold: 0.12 });
-        document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+        }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+        document.querySelectorAll(
+            ".reveal, .reveal-scale, .reveal-left, .reveal-right, .reveal-blur, .reveal-stagger"
+        ).forEach(el => io.observe(el));
 
         // -----------------------------------------------------------
         // Init
