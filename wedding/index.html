@@ -258,6 +258,21 @@
             height: 14px;
         }
 
+        /* -------- Hidden YouTube player (headless audio source) --------
+           Rendered offscreen — iframe tetap active jadi API bisa play/pause,
+           tapi user cuma liat vinyl button custom kita. */
+        #yt-player-holder {
+            position: fixed;
+            left: -9999px;
+            top: -9999px;
+            width: 1px;
+            height: 1px;
+            pointer-events: none;
+            opacity: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
         /* -------- Music toggle (floating vinyl) -------- */
         .music-toggle {
             position: fixed;
@@ -1686,11 +1701,13 @@
         </div>
     </div>
 
-    <!-- Background music: taruh file di wedding/audio/everything-you-are.mp3 -->
-    <audio id="bg-music" loop preload="auto">
-        <source src="audio/everything-you-are.mp3" type="audio/mpeg" />
-        <source src="audio/everything-you-are.m4a" type="audio/mp4" />
-    </audio>
+    <!-- Background music: YouTube IFrame API headless.
+         Video ID di-config via MUSIC_YT_VIDEO_ID di script bawah.
+         Player-nya tetep di-render (1x1px offscreen) biar API bisa kontrol,
+         tapi visually hidden karena UI kita pake vinyl button custom. -->
+    <div id="yt-player-holder" aria-hidden="true">
+        <div id="yt-player"></div>
+    </div>
 
     <!-- Music toggle -->
     <button class="music-toggle" id="music-toggle" type="button" aria-label="Toggle music">
@@ -2382,23 +2399,22 @@
         const splash = document.getElementById("splash");
 
         // -----------------------------------------------------------
-        // Music player
+        // Music player — YouTube IFrame API (headless)
         // -----------------------------------------------------------
-        const audio = document.getElementById("bg-music");
+        // Kenapa YT bukan file MP3?
+        //  1. Legal & official — stream langsung dari channel artist
+        //  2. Ga perlu host file 2MB+ di repo
+        //  3. Handling autoplay lebih reliable via player.playVideo() setelah
+        //     API ready + user gesture, dengan fallback retry.
+        //
+        // Ganti ID di sini kalo mau pake lagu lain (dari URL YouTube).
+        //   https://www.youtube.com/watch?v=XXXXXXXXXXX  →  ID = "XXXXXXXXXXX"
+        const MUSIC_YT_VIDEO_ID = "lB8ASupNtlw"; // Hindia - Everything U Are
+
         const musicBtn = document.getElementById("music-toggle");
-        audio.volume = 0.55;
-
-        // Eager preload — mulai download audio langsung biar siap play
-        // begitu user kasih interaction. Chrome autoplay policy butuh
-        // user gesture, tapi kalo file belum ready, play() bisa reject.
-        try { audio.load(); } catch (e) { /* silent */ }
-
-        audio.addEventListener("error", (e) => {
-            console.warn("[audio] load/play error:", e);
-        });
-        audio.addEventListener("canplaythrough", () => {
-            console.log("[audio] ready to play");
-        });
+        let ytPlayer = null;
+        let ytReady = false;
+        let ytPendingPlay = false;
 
         function setPlaying(playing) {
             musicBtn.classList.toggle("playing", playing);
@@ -2411,29 +2427,98 @@
             hintTimer = setTimeout(() => musicBtn.classList.remove("hint"), durationMs || 4200);
         }
 
-        musicBtn.addEventListener("click", () => {
-            // First click → stop the highlight pulse
-            musicBtn.classList.remove("highlight");
+        function musicIsPlaying() {
+            if (!ytPlayer || !ytReady) return false;
+            try {
+                // YT.PlayerState.PLAYING === 1, BUFFERING === 3
+                const s = ytPlayer.getPlayerState();
+                return s === 1 || s === 3;
+            } catch (e) { return false; }
+        }
 
-            if (audio.paused) {
-                audio.play().catch((err) => {
-                    console.warn("[audio] play blocked:", err);
-                    setPlaying(false);
-                });
+        function musicPlay() {
+            if (!ytPlayer || !ytReady) {
+                // Player belum siap — antri buat auto-play begitu onReady fires
+                ytPendingPlay = true;
+                return;
+            }
+            try { ytPlayer.playVideo(); }
+            catch (err) { console.warn("[music] playVideo error:", err); }
+        }
+
+        function musicPause() {
+            if (!ytPlayer || !ytReady) {
+                ytPendingPlay = false;
+                return;
+            }
+            try { ytPlayer.pauseVideo(); }
+            catch (err) { /* silent */ }
+        }
+
+        // Load YouTube IFrame API script async
+        (function loadYouTubeAPI() {
+            const tag = document.createElement("script");
+            tag.src = "https://www.youtube.com/iframe_api";
+            tag.async = true;
+            document.head.appendChild(tag);
+        })();
+
+        // Global callback fired by YouTube API script setelah script loaded
+        window.onYouTubeIframeAPIReady = function () {
+            ytPlayer = new YT.Player("yt-player", {
+                videoId: MUSIC_YT_VIDEO_ID,
+                width: 1,
+                height: 1,
+                playerVars: {
+                    autoplay: 0,
+                    controls: 0,
+                    disablekb: 1,
+                    fs: 0,
+                    iv_load_policy: 3,     // hide annotations
+                    loop: 1,
+                    playlist: MUSIC_YT_VIDEO_ID, // required for loop=1 on single video
+                    modestbranding: 1,
+                    playsinline: 1,        // required for iOS to play inline
+                    rel: 0,
+                    enablejsapi: 1
+                },
+                events: {
+                    onReady: function (e) {
+                        ytReady = true;
+                        try { e.target.setVolume(55); } catch (_) { }
+                        // Kalo user udah klik play sebelum API ready, autofire sekarang
+                        if (ytPendingPlay) {
+                            ytPendingPlay = false;
+                            tryPlayMusic();
+                        }
+                    },
+                    onStateChange: function (e) {
+                        // States: -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued
+                        if (e.data === 1) {
+                            setPlaying(true);
+                            musicBtn.classList.remove("highlight");
+                            flashHint(5500);
+                        } else if (e.data === 0 || e.data === 2) {
+                            setPlaying(false);
+                        }
+                    },
+                    onError: function (e) {
+                        // 2 invalid id · 5 HTML5 error · 100 not found ·
+                        // 101/150 embedding not allowed
+                        console.warn("[music] YT player error:", e.data);
+                    }
+                }
+            });
+        };
+
+        musicBtn.addEventListener("click", () => {
+            musicBtn.classList.remove("highlight");
+            if (musicIsPlaying()) {
+                musicPause();
             } else {
-                audio.pause();
+                musicPlay();
             }
         });
-
-        // Centralized play/pause handling — apapun trigger-nya (klik tombol,
-        // autoplay dari "Buka Undangan", programmatic), sync UI state.
-        audio.addEventListener("play", () => {
-            setPlaying(true);
-            musicBtn.classList.remove("highlight");
-            // Flash tooltip "Sedang Diputar..." tiap kali lagu jalan
-            flashHint(5500);
-        });
-        audio.addEventListener("pause", () => setPlaying(false));
 
         function openInvitation() {
             splash.classList.add("gone");
@@ -2441,53 +2526,47 @@
             setTimeout(() => { splash.style.display = "none"; }, 950);
             window.scrollTo({ top: 0, behavior: "instant" });
 
-            // Klik "Buka Undangan" = valid user gesture buat browser
-            // autoplay policy. Trigger audio.play() langsung di sini biar
-            // lagu mulai bareng splash close (tanpa perlu klik 2x).
-            // Tooltip di-handle otomatis di audio "play" event listener.
-            tryPlayAudio();
+            // Klik "Buka Undangan" = valid user gesture. Trigger play langsung.
+            // Tooltip di-handle otomatis di onStateChange (PLAYING event).
+            tryPlayMusic();
 
             // Tombol musik: fade in + pulse highlight.
-            // Kalau play sukses, pulse hilang otomatis lewat audio.on("play").
-            // Kalau di-block, pulse jadi sinyal buat user klik manual.
+            // Kalau play sukses, pulse otomatis hilang via onStateChange.
+            // Kalau autoplay masih di-block, pulse jadi sinyal buat klik manual.
             setTimeout(() => {
                 musicBtn.classList.add("ready", "highlight");
             }, 600);
         }
 
-        // Resilient autoplay: kalau reject (kena autoplay policy atau audio
-        // belum ready), fallback ke:
-        //  1. Retry pas audio "canplay" event
-        //  2. Retry pas user interact di manapun (klik/touch/scroll/keypress)
-        function tryPlayAudio() {
-            const p = audio.play();
-            if (!p || typeof p.catch !== "function") return;
+        // Resilient play — 3 fallback layer:
+        //  1. Coba langsung (musicPlay)
+        //  2. Kalo API belum ready → queued via ytPendingPlay, akan fire
+        //     otomatis pas onReady
+        //  3. Kalo autoplay policy tetep block, register listener di user
+        //     interaction pertama (scroll/tap/click/key) buat retry
+        function tryPlayMusic() {
+            musicPlay();
 
-            p.catch((err) => {
-                console.warn("[audio] play blocked, arming fallback listeners:", err);
+            // Cek apakah play sukses setelah 1.2s. Kalo blm, arm retry.
+            setTimeout(() => {
+                if (musicIsPlaying()) return;
 
                 const retry = () => {
-                    audio.play()
-                        .then(() => cleanupRetries())
-                        .catch(() => { /* try again on next event */ });
+                    musicPlay();
+                    setTimeout(() => { if (musicIsPlaying()) cleanupRetries(); }, 600);
                 };
                 const cleanupRetries = () => {
-                    audio.removeEventListener("canplay", retry);
                     window.removeEventListener("pointerdown", retry, true);
                     window.removeEventListener("touchstart", retry, true);
                     window.removeEventListener("keydown", retry, true);
                     window.removeEventListener("scroll", retry, true);
                 };
 
-                audio.addEventListener("canplay", retry, { once: false });
                 window.addEventListener("pointerdown", retry, { capture: true });
                 window.addEventListener("touchstart", retry, { capture: true, passive: true });
                 window.addEventListener("keydown", retry, { capture: true });
                 window.addEventListener("scroll", retry, { capture: true, passive: true });
-
-                // Clean up ONCE audio starts playing (via listener above)
-                audio.addEventListener("play", cleanupRetries, { once: true });
-            });
+            }, 1200);
         }
 
         document.getElementById("open-invite").addEventListener("click", openInvitation);
