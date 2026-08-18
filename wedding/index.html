@@ -371,47 +371,76 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Now-playing tooltip: two-line "music tag" card
+           Row 1: kecil uppercase gold (lead label — "Sedang Diputar")
+           Row 2: serif judul lagu single-line */
         .music-toggle .track-label {
             position: absolute;
-            /* Default (wide viewport): tooltip di kanan tombol */
+            /* Default (wide viewport): pill di kanan tombol */
             left: calc(100% + 12px);
             top: 50%;
-            transform: translateY(-50%);
+            transform: translateY(-50%) translateX(-6px);
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 3px;
             white-space: nowrap;
             background: var(--paper);
             border: 1.5px solid var(--line);
-            padding: 9px 16px;
-            border-radius: 999px;
-            font-family: "Inter", sans-serif;
-            font-weight: 700;
-            font-size: 12px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink);
+            padding: 8px 16px;
+            border-radius: 12px;
             box-shadow: 0 6px 18px rgba(30, 22, 12, .18);
             opacity: 0;
             pointer-events: none;
-            transition: opacity .3s ease, transform .3s ease;
+            transition: opacity .35s ease, transform .35s ease;
             z-index: 101;
+        }
+
+        .music-toggle .track-lead {
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            font-size: 9px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .music-toggle .track-title {
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.02em;
+            color: var(--ink);
+            line-height: 1.15;
         }
 
         .music-toggle.hint .track-label {
             opacity: 1;
+            transform: translateY(-50%) translateX(0);
         }
 
-        /* Mobile: tooltip pindah ke atas tombol biar ga ke-clip
-           layar sempit. Text-wrap kalau perlu. */
+        /* Mobile: tooltip pindah ke atas tombol, alignment kiri
+           (biar ga ke-clip layar sempit). Struktur tetep 2-baris
+           tapi lebih ringkas. */
         @media (max-width: 640px) {
             .music-toggle .track-label {
                 left: 0;
                 top: auto;
-                bottom: calc(100% + 12px);
-                transform: none;
-                white-space: normal;
-                max-width: min(78vw, 320px);
-                line-height: 1.35;
-                text-align: left;
-                letter-spacing: 0.08em;
+                bottom: calc(100% + 10px);
+                transform: translateY(6px);
+                padding: 7px 14px;
+                border-radius: 10px;
+            }
+            .music-toggle.hint .track-label {
+                transform: translateY(0);
+            }
+            .music-toggle .track-lead {
+                font-size: 8.5px;
+                letter-spacing: 0.16em;
+            }
+            .music-toggle .track-title {
+                font-size: 13.5px;
             }
         }
 
@@ -1993,9 +2022,12 @@
             <circle cx="24" cy="24" r="2.4" fill="currentColor" stroke="none" />
             <path d="M30 8 Q 34 14 32 20" opacity=".65" />
         </svg>
-        <span class="track-label"
-            data-id="Sedang Diputar · Everything You Are · Hindia"
-            data-en="Now Playing · Everything You Are · Hindia">Sedang Diputar · Everything You Are · Hindia</span>
+        <span class="track-label">
+            <span class="track-lead"
+                data-id="Sedang Diputar"
+                data-en="Now Playing">Sedang Diputar</span>
+            <span class="track-title">Everything You Are &middot; Hindia</span>
+        </span>
     </button>
 
     <!-- Language toggle -->
