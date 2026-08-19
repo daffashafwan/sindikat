@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "wedding.shafika.id" }],
+      "destination": "/wedding/index.html"
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "wedding.shafika.id" }],
+      "destination": "/wedding/:path*"
+    }
+  ]
+}
