@@ -2849,10 +2849,8 @@
             <h2 class="serif" data-id="Tempat Berlangsungnya Acara" data-en="Where We Say I Do">Tempat Berlangsungnya Acara</h2>
 
             <div class="venue-name" id="venue-name">Kediaman Mempelai</div>
-            <div class="venue-address" id="venue-address"
-                data-id="Jl. Contoh Alamat No. 1, Jakarta — mohon disesuaikan"
-                data-en="Please update with the exact address">
-                Jl. Contoh Alamat No. 1, Jakarta — mohon disesuaikan
+            <div class="venue-address" id="venue-address">
+                Desa Sarirogo, Kecamatan Sidoarjo, Kabupaten Sidoarjo, Jawa Timur
             </div>
 
             <!-- Floral divider before the map -->
@@ -3391,6 +3389,9 @@
         function applyLang() {
             const venueNameEl = document.getElementById("venue-name");
             if (venueNameEl) venueNameEl.textContent = CONFIG.venue.nameId;
+
+            const venueAddrEl = document.getElementById("venue-address");
+            if (venueAddrEl) venueAddrEl.textContent = CONFIG.venue.addressId;
 
             const guestElInner = document.getElementById("guest-name");
             if (guestElInner && !guest) {
