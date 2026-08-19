@@ -46,9 +46,15 @@
             color: var(--ink);
             font-family: "Cormorant Garamond", serif;
             font-weight: 600;
-            font-size: 21px;
+            /* Body scales dari 19px min → 21px ideal → 22px max.
+               19px minimum menjamin body text readable di device paling kecil,
+               tanpa terlalu besar di desktop. */
+            font-size: clamp(19px, 1vw + 17px, 22px);
             line-height: 1.6;
             overflow-x: hidden;
+            /* Cegah iOS/Android auto-shrink text saat rotate/zoom */
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
             /* Avoid grayscale antialiasing which makes text look thinner on macOS.
                Use subpixel-antialiased (default on Windows/Linux) for maximum crispness. */
             -webkit-font-smoothing: subpixel-antialiased;
@@ -92,16 +98,25 @@
 
         .btn:focus-visible,
         .splash .open-btn:focus-visible,
-        .lang-toggle button:focus-visible,
         .music-toggle:focus-visible,
         .rsvp .radio-group label.opt:focus-visible {
             outline-offset: 4px;
         }
 
+        /* Default serif utility: Cormorant Garamond bold buat readability.
+           Untuk hero display (h1.serif) di-override ke Italiana biar tetap
+           dapet efek dekoratifnya di ukuran besar. */
         .serif {
+            font-family: "Cormorant Garamond", "Italiana", serif;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        /* Hero couple names — display only, oke pake Italiana thin di ukuran gede */
+        .hero h1.serif {
             font-family: "Italiana", "Cormorant Garamond", serif;
             font-weight: 400;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.02em;
         }
 
         .script {
@@ -169,7 +184,7 @@
 
         .splash .invite-label {
             font-family: "Inter", sans-serif;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             letter-spacing: 0.18em;
             text-transform: uppercase;
@@ -209,7 +224,7 @@
             font-weight: 700;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--ink-soft);
         }
 
@@ -399,7 +414,7 @@
         .music-toggle .track-lead {
             font-family: "Inter", sans-serif;
             font-weight: 700;
-            font-size: 9px;
+            font-size: 10.5px;
             letter-spacing: 0.18em;
             text-transform: uppercase;
             color: var(--accent);
@@ -409,7 +424,7 @@
         .music-toggle .track-title {
             font-family: "Cormorant Garamond", serif;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 16px;
             letter-spacing: 0.02em;
             color: var(--ink);
             line-height: 1.15;
@@ -436,46 +451,12 @@
                 transform: translateY(0);
             }
             .music-toggle .track-lead {
-                font-size: 8.5px;
+                font-size: 10px;
                 letter-spacing: 0.16em;
             }
             .music-toggle .track-title {
-                font-size: 13.5px;
+                font-size: 14.5px;
             }
-        }
-
-        /* -------- Language toggle -------- */
-        .lang-toggle {
-            position: fixed;
-            top: 22px;
-            right: 22px;
-            z-index: 100;
-            display: inline-flex;
-            gap: 2px;
-            background: rgba(255, 255, 255, .7);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            padding: 4px;
-        }
-
-        .lang-toggle button {
-            background: transparent;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 999px;
-            font-family: "Inter", sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            color: var(--ink-soft);
-            cursor: pointer;
-            transition: all .3s;
-        }
-
-        .lang-toggle button.active {
-            background: var(--ink);
-            color: var(--bg);
         }
 
         /* -------- Section layout -------- */
@@ -582,26 +563,35 @@
         h1,
         h2,
         h3 {
-            font-family: "Italiana", serif;
-            font-weight: 400;
             color: var(--ink);
-            line-height: 1.15;
+            line-height: 1.2;
         }
 
+        /* Hero display headline (Daffa & Atikah): Italiana display serif
+           tetap dipakai karena ukurannya sangat besar & efek dekoratif */
         h1 {
+            font-family: "Italiana", serif;
+            font-weight: 400;
             font-size: clamp(48px, 9vw, 108px);
             letter-spacing: 0.02em;
         }
 
+        /* Section headings pakai Cormorant Garamond bold — jauh lebih
+           readable di mobile & jauh lebih legible untuk pembaca yang lebih tua,
+           tanpa kehilangan feel elegan */
         h2 {
-            font-size: clamp(32px, 5vw, 52px);
-            letter-spacing: 0.03em;
-            margin-bottom: 12px;
+            font-family: "Cormorant Garamond", "Italiana", serif;
+            font-weight: 700;
+            font-size: clamp(34px, 5.4vw, 52px);
+            letter-spacing: 0.015em;
+            margin-bottom: 14px;
         }
 
         h3 {
-            font-size: clamp(22px, 3vw, 30px);
-            letter-spacing: 0.05em;
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 700;
+            font-size: clamp(24px, 3.2vw, 32px);
+            letter-spacing: 0.02em;
         }
 
         p {
@@ -611,9 +601,10 @@
         p.lede {
             font-size: clamp(19px, 1.6vw, 22px);
             color: var(--ink);
-            font-weight: 500;
+            font-weight: 600;
             max-width: 580px;
             margin: 0 auto;
+            line-height: 1.55;
         }
 
         /* -------- Hero -------- */
@@ -650,7 +641,7 @@
             align-items: center;
             gap: 20px;
             font-family: "Italiana", serif;
-            font-size: clamp(17px, 1.8vw, 21px);
+            font-size: clamp(18px, 1.8vw, 21px);
             letter-spacing: 0.2em;
             text-transform: uppercase;
             color: var(--ink);
@@ -723,10 +714,11 @@
         }
 
         .couple .person .name {
-            font-family: "Italiana", serif;
-            font-size: clamp(30px, 4.5vw, 46px);
-            letter-spacing: 0.02em;
-            line-height: 1.1;
+            font-family: "Cormorant Garamond", "Italiana", serif;
+            font-weight: 700;
+            font-size: clamp(32px, 4.8vw, 46px);
+            letter-spacing: 0.015em;
+            line-height: 1.15;
             margin-bottom: 14px;
             color: var(--ink);
         }
@@ -833,7 +825,7 @@
             font-weight: 600;
             letter-spacing: 0.2em;
             text-transform: uppercase;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--ink-soft);
         }
 
@@ -858,12 +850,12 @@
 
         .event .day-of-week {
             font-family: "Inter", sans-serif;
-            font-weight: 600;
-            letter-spacing: 0.24em;
+            font-weight: 700;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            font-size: 14px;
+            font-size: 15px;
             color: var(--ink);
-            margin-top: 8px;
+            margin-top: 12px;
         }
 
         @media (max-width: 560px) {
@@ -889,14 +881,15 @@
         }
 
         .event .schedule .slot h3 {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            font-size: clamp(24px, 3.4vw, 32px);
         }
 
         .event .schedule .slot .time {
             font-family: "Inter", sans-serif;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            font-size: 16px;
             color: var(--ink);
             text-transform: uppercase;
         }
@@ -947,7 +940,7 @@
         .countdown .lbl {
             margin-top: 10px;
             font-family: "Inter", sans-serif;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -1037,7 +1030,7 @@
             border-radius: 999px;
             font-family: "Inter", sans-serif;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 13px;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             box-shadow: 0 6px 18px rgba(30, 22, 12, .25);
@@ -1058,7 +1051,7 @@
 
         @media (max-width: 560px) {
             .map-preview-cta .cta-inner {
-                font-size: 11px;
+                font-size: 12px;
                 padding: 10px 16px;
                 letter-spacing: 0.1em;
             }
@@ -1150,7 +1143,7 @@
             border-radius: 999px;
             font-family: "Inter", sans-serif;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 13px;
             letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--ink-soft);
@@ -1183,7 +1176,7 @@
             }
             .map-toolbar .tool-btn {
                 padding: 7px 12px;
-                font-size: 11px;
+                font-size: 12px;
                 letter-spacing: 0.1em;
             }
             .map-toolbar .tool-lbl { display: none; }
@@ -1207,7 +1200,7 @@
         .map-legend .legend-title {
             font-family: "Inter", sans-serif;
             font-weight: 700;
-            font-size: 11px;
+            font-size: 12px;
             letter-spacing: 0.16em;
             text-transform: uppercase;
             color: var(--ink-soft);
@@ -1361,7 +1354,7 @@
             border-radius: 999px;
             font-family: "Inter", sans-serif;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 13px;
             letter-spacing: 0.06em;
             text-transform: uppercase;
             color: var(--ink);
@@ -1457,7 +1450,7 @@
 
         .location .venue-3d.no-coords .empty code {
             font-family: "Inter", sans-serif;
-            font-size: 11px;
+            font-size: 13px;
             background: rgba(176, 151, 95, .12);
             padding: 2px 6px;
             border-radius: 3px;
@@ -1514,7 +1507,7 @@
         .rsvp label {
             display: block;
             font-family: "Inter", sans-serif;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
             letter-spacing: 0.12em;
             text-transform: uppercase;
@@ -1568,7 +1561,7 @@
             cursor: pointer;
             font-family: "Inter", sans-serif;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 14px;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--ink-soft);
@@ -1628,7 +1621,7 @@
 
         .wish .meta {
             font-family: "Inter", sans-serif;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.1em;
             text-transform: uppercase;
@@ -1712,7 +1705,7 @@
         footer .credits {
             margin-top: 24px;
             font-family: "Inter", sans-serif;
-            font-size: 11px;
+            font-size: 12px;
             letter-spacing: 0.04em;
             color: var(--ink-soft);
             opacity: 0.55;
@@ -2534,12 +2527,6 @@
         </span>
     </button>
 
-    <!-- Language toggle -->
-    <div class="lang-toggle" role="group" aria-label="Language">
-        <button data-lang="id" class="active" aria-pressed="true">ID</button>
-        <button data-lang="en" aria-pressed="false">EN</button>
-    </div>
-
     <!-- ============ HERO ============ -->
     <section class="hero">
         <!-- Watermark script names -->
@@ -3215,9 +3202,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const guest = (urlParams.get("to") || urlParams.get("guest") || "").trim();
         const guestEl = document.getElementById("guest-name");
-        guestEl.textContent = guest || (localStorage.getItem("wedding.lang") === "en"
-            ? "Family & Friends"
-            : "Bapak / Ibu / Saudara / i");
+        guestEl.textContent = guest || "Bapak / Ibu / Saudara / i";
 
         document.body.classList.add("locked");
         const splash = document.getElementById("splash");
@@ -3396,48 +3381,24 @@
         document.getElementById("open-invite").addEventListener("click", openInvitation);
 
         // -----------------------------------------------------------
-        // i18n
+        // i18n — kunci ke bahasa Indonesia. Function `applyLang` di-keep
+        // sebagai no-op agar existing call sites (map, dsb.) tetap safe.
+        // Attribute data-en di HTML tetap disimpan untuk keperluan future.
         // -----------------------------------------------------------
-        const langButtons = document.querySelectorAll(".lang-toggle button");
-        let currentLang = localStorage.getItem("wedding.lang") || "id";
+        const currentLang = "id";
+        document.documentElement.lang = "id";
 
-        function applyLang(lang) {
-            currentLang = lang;
-            document.documentElement.lang = lang;
-            localStorage.setItem("wedding.lang", lang);
-
-            document.querySelectorAll("[data-id]").forEach(el => {
-                const val = el.getAttribute("data-" + lang);
-                if (val !== null) el.textContent = val;
-            });
-
-            document.querySelectorAll("[data-id-placeholder]").forEach(el => {
-                const val = el.getAttribute("data-" + lang + "-placeholder");
-                if (val !== null) el.setAttribute("placeholder", val);
-            });
-
-            langButtons.forEach(b => {
-                const active = b.dataset.lang === lang;
-                b.classList.toggle("active", active);
-                b.setAttribute("aria-pressed", active ? "true" : "false");
-            });
-
+        function applyLang() {
             const venueNameEl = document.getElementById("venue-name");
-            if (venueNameEl) {
-                venueNameEl.textContent = lang === "id" ? CONFIG.venue.nameId : CONFIG.venue.nameEn;
-            }
+            if (venueNameEl) venueNameEl.textContent = CONFIG.venue.nameId;
 
             const guestElInner = document.getElementById("guest-name");
             if (guestElInner && !guest) {
-                guestElInner.textContent = lang === "en"
-                    ? "Family & Friends"
-                    : "Bapak / Ibu / Saudara / i";
+                guestElInner.textContent = "Bapak / Ibu / Saudara / i";
             }
 
             renderWishes();
         }
-
-        langButtons.forEach(b => b.addEventListener("click", () => applyLang(b.dataset.lang)));
 
         // -----------------------------------------------------------
         // Countdown
@@ -3569,7 +3530,7 @@
         // -----------------------------------------------------------
         // Init
         // -----------------------------------------------------------
-        applyLang(currentLang);
+        applyLang();
         renderWishes();
     </script>
 
@@ -3875,10 +3836,9 @@
                     });
                 }
 
-                // Re-apply language ke landmark labels yang baru dirender
+                // Re-apply venue/guest labels setelah marker baru dirender
                 try {
-                    const savedLang = localStorage.getItem("wedding.lang") || "id";
-                    if (typeof applyLang === "function") applyLang(savedLang);
+                    if (typeof applyLang === "function") applyLang();
                 } catch (e) { /* silent */ }
 
                 // ==============================================================
@@ -4085,10 +4045,9 @@
                         '</li>'
                     ).join("");
 
-                    // Re-apply language ke legend items yang baru dirender
+                    // Re-apply venue/guest labels setelah legend baru dirender
                     try {
-                        const savedLang = localStorage.getItem("wedding.lang") || "id";
-                        if (typeof applyLang === "function") applyLang(savedLang);
+                        if (typeof applyLang === "function") applyLang();
                     } catch (e) { /* silent */ }
                 }
             });
