@@ -810,7 +810,7 @@
             height: 44px;
         }
 
-        /* Big artistic date: 10 · X · 2026 */
+        /* Big artistic date: 11 · IX · 2026 */
         .event .big-date {
             display: flex;
             align-items: stretch;
@@ -1221,6 +1221,8 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            max-height: 55vh;
+            overflow-y: auto;
         }
 
         .map-legend .legend-item {
@@ -1371,6 +1373,59 @@
             .landmark-marker .label { font-size: 12px; padding: 4px 10px; }
             .landmark-marker .dot { width: 26px; height: 26px; }
             .landmark-marker .dot svg { width: 14px; height: 14px; }
+        }
+
+        /* Venue marker — distinct from landmarks: bigger dot, gold-filled,
+           heart icon, and a subtle pulsing ring biar jelas ini titik utama */
+        .landmark-marker.venue-marker {
+            z-index: 5;
+        }
+        .landmark-marker.venue-marker .dot {
+            width: 44px;
+            height: 44px;
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(59, 53, 43, .28);
+            position: relative;
+        }
+        .landmark-marker.venue-marker .dot svg {
+            width: 22px;
+            height: 22px;
+            color: var(--paper);
+        }
+        /* Pulsing outer ring — keeps drawing eye to the venue */
+        .landmark-marker.venue-marker .dot::before {
+            content: "";
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1.5px solid var(--accent);
+            opacity: 0;
+            animation: venuePulse 2.4s ease-out infinite;
+            pointer-events: none;
+        }
+        .landmark-marker.venue-marker .label {
+            background: var(--accent);
+            color: var(--paper);
+            border-color: var(--accent);
+            font-size: 13px;
+            letter-spacing: 0.08em;
+        }
+
+        @keyframes venuePulse {
+            0%   { transform: scale(0.85); opacity: 0.55; }
+            70%  { transform: scale(1.4);  opacity: 0;    }
+            100% { transform: scale(1.4);  opacity: 0;    }
+        }
+
+        @media (max-width: 560px) {
+            .landmark-marker.venue-marker .dot { width: 36px; height: 36px; }
+            .landmark-marker.venue-marker .dot svg { width: 18px; height: 18px; }
+            .landmark-marker.venue-marker .label { font-size: 12px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .landmark-marker.venue-marker .dot::before { animation: none; opacity: 0.35; }
         }
 
         /* Fallback state (no coords) */
@@ -1654,6 +1709,22 @@
             color: var(--ink-soft);
         }
 
+        footer .credits {
+            margin-top: 24px;
+            font-family: "Inter", sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.04em;
+            color: var(--ink-soft);
+            opacity: 0.55;
+        }
+        footer .credits a {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-thickness: 0.5px;
+            text-underline-offset: 2px;
+        }
+        footer .credits a:hover { color: var(--accent); }
+
         /* =========================================================
            MOTION SYSTEM
            - .reveal              → base fade + slide-up (default)
@@ -1916,23 +1987,25 @@
         }
 
         /* ================================================================
-           SECTION FLORALS — Watercolor illustrations from Iconify (Noto Emoji)
-           Softly filtered to match the warm cream/gold palette.
+           SECTION FLORALS — Line-art botanical icons from Iconify (Game Icons)
+           Monochrome, tinted with --accent via CSS mask-image technique.
            Fade + drift in on scroll, gentle sway continuously.
            ================================================================ */
 
-        /* Shared warm-tone filter to blend colorful emoji florals with the cream palette */
-        .floral-corner,
-        .fd-icon,
-        .sf-side,
-        .sf-center,
-        .wreath-img,
-        .name-orn {
-            filter:
-                sepia(0.18)
-                saturate(0.85)
-                brightness(0.98)
-                drop-shadow(0 2px 6px rgba(90, 66, 30, 0.08));
+        /* Base .floral element — icon is passed via inline style `--icon: url(...)`
+           and tinted with background-color; SVG shape is used as a mask. */
+        .floral {
+            display: inline-block;
+            background-color: var(--accent);
+            -webkit-mask-image: var(--icon);
+            mask-image: var(--icon);
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            mask-position: center;
+            -webkit-mask-size: contain;
+            mask-size: contain;
+            filter: drop-shadow(0 1px 2px rgba(90, 66, 30, 0.08));
         }
 
         /* -------- Corner watercolor florals -------- */
@@ -1942,7 +2015,7 @@
         .floral-corner {
             position: absolute;
             width: clamp(96px, 14vw, 180px);
-            height: auto;
+            aspect-ratio: 1 / 1;
             opacity: 0;
             pointer-events: none;
             user-select: none;
@@ -2081,10 +2154,10 @@
             );
         }
         .floral-divider .fd-icon {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
+            aspect-ratio: 1 / 1;
             flex-shrink: 0;
-            display: block;
         }
 
         /* -------- Name flower mark (above each person's name) -------- */
@@ -2159,15 +2232,15 @@
         .container.in .section-flourish { opacity: 1; transform: none; }
 
         .section-flourish .sf-side {
-            width: clamp(30px, 4.5vw, 42px);
-            height: auto;
+            width: clamp(28px, 4.5vw, 40px);
+            aspect-ratio: 1 / 1;
             opacity: 0.85;
         }
         .section-flourish .sf-side-l { transform: rotate(-12deg); }
         .section-flourish .sf-side-r { transform: rotate(12deg) scaleX(-1); }
         .section-flourish .sf-center {
-            width: clamp(48px, 6vw, 64px);
-            height: auto;
+            width: clamp(44px, 6vw, 60px);
+            aspect-ratio: 1 / 1;
         }
 
         /* -------- Ambient continuous motion (gentle sway) -------- */
@@ -2271,6 +2344,57 @@
             transform-origin: center;
         }
 
+        /* ================================================================
+           SECTION SEQUENTIAL FADE — sebelumnya fade-out dulu, baru sebelah fade-in
+           Menggunakan CSS scroll-driven animations dengan animation-range yang
+           dipisah: fade-in di entry akhir, fade-out di exit awal — supaya
+           section previous betul-betul kelar hilang sebelum next muncul.
+           Browser tanpa support: sections tetap visible (graceful degradation).
+           ================================================================ */
+        @supports (animation-timeline: view()) {
+            @keyframes sectionFadeIn {
+                from { opacity: 0; }
+                to   { opacity: 1; }
+            }
+            @keyframes sectionFadeOut {
+                from { opacity: 1; }
+                to   { opacity: 0; }
+            }
+
+            .hero,
+            .couple,
+            .event,
+            .countdown,
+            .location,
+            .rsvp,
+            .gift-note,
+            footer {
+                /* fadeIn: `both` fill → invisible before, visible after
+                   fadeOut: `forwards` fill only → inherits opacity 1 from fadeIn's
+                   forwards fill until it triggers, then locks at opacity 0. This avoids
+                   fill conflicts between the two animations. */
+                animation:
+                    sectionFadeIn linear both,
+                    sectionFadeOut linear forwards;
+                animation-timeline: view(), view();
+                /* Sequential timing:
+                   - fadeIn triggers late in entry (section already halfway visible)
+                   - fadeOut triggers early in exit (section starts leaving viewport)
+                   - Between them: full opacity for the whole visible duration */
+                animation-range:
+                    entry 40% entry 90%,
+                    exit 10% exit 60%;
+                will-change: opacity;
+            }
+
+            /* Hero starts opacity 1 immediately (no entry phase before scroll = 0) */
+            .hero {
+                animation-range:
+                    entry 0% entry 5%,
+                    exit 10% exit 60%;
+            }
+        }
+
         /* Reduce all motion when user prefers */
         @media (prefers-reduced-motion: reduce) {
             .reveal,
@@ -2308,7 +2432,15 @@
             .section-flourish .sf-side,
             .section-flourish .sf-center,
             .wreath-img,
-            .name-orn {
+            .name-orn,
+            .hero,
+            .couple,
+            .event,
+            .countdown,
+            .location,
+            .rsvp,
+            .gift-note,
+            footer {
                 animation: none !important;
                 transition: none !important;
                 transform: none !important;
@@ -2353,8 +2485,8 @@
             <div class="couple-script">Daffa <span class="amp">&amp;</span> Atikah</div>
 
             <div class="date"
-                data-id="Sabtu · 10 Oktober 2026"
-                data-en="Saturday · October 10, 2026">Sabtu · 10 Oktober 2026</div>
+                data-id="Jumat · 11 September 2026"
+                data-en="Friday · September 11, 2026">Jumat · 11 September 2026</div>
 
             <div class="to-block">
                 <div class="to-label" data-id="Kepada Yth." data-en="Dear">Kepada Yth.</div>
@@ -2413,15 +2545,19 @@
         <!-- Watermark script names -->
         <div class="hero-watermark" aria-hidden="true"><span>Daffa &amp; Atikah</span></div>
 
-        <!-- Watercolor floral corner accents (Noto Emoji via Iconify) -->
-        <img class="floral-corner floral-tl hero-corner" src="https://api.iconify.design/noto/bouquet.svg"
-            alt="" aria-hidden="true" />
-        <img class="floral-corner floral-tr hero-corner" src="https://api.iconify.design/noto/rose.svg"
-            alt="" aria-hidden="true" />
-        <img class="floral-corner floral-bl hero-corner" src="https://api.iconify.design/noto/hibiscus.svg"
-            alt="" aria-hidden="true" />
-        <img class="floral-corner floral-br hero-corner" src="https://api.iconify.design/noto/cherry-blossom.svg"
-            alt="" aria-hidden="true" />
+        <!-- Line-art botanical corner accents (Game Icons via Iconify, tinted with --accent) -->
+        <span class="floral floral-corner floral-tl"
+            style="--icon:url(https://api.iconify.design/game-icons/flowers.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-tr"
+            style="--icon:url(https://api.iconify.design/game-icons/rose.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-bl"
+            style="--icon:url(https://api.iconify.design/game-icons/vine-flower.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-br"
+            style="--icon:url(https://api.iconify.design/game-icons/daisy.svg)"
+            aria-hidden="true"></span>
 
         <div class="container">
             <span class="mono eyebrow" data-id="The Wedding Of" data-en="The Wedding Of">The Wedding Of</span>
@@ -2458,9 +2594,9 @@
             </div>
 
             <div class="date-line">
-                <span data-id="Sabtu" data-en="Saturday">Sabtu</span>
+                <span data-id="Jumat" data-en="Friday">Jumat</span>
                 <span class="dot"></span>
-                <span data-id="10 Oktober 2026" data-en="October 10, 2026">10 Oktober 2026</span>
+                <span data-id="11 September 2026" data-en="September 11, 2026">11 September 2026</span>
             </div>
 
             <div class="hashtag">#DaffinitelyAtikah</div>
@@ -2469,15 +2605,19 @@
 
     <!-- ============ COUPLE ============ -->
     <section class="couple">
-        <!-- Watercolor floral corner accents (Noto Emoji via Iconify) -->
-        <img class="floral-corner floral-tl" src="https://api.iconify.design/noto/bouquet.svg"
-            alt="" aria-hidden="true" loading="lazy" />
-        <img class="floral-corner floral-tr" src="https://api.iconify.design/noto/rose.svg"
-            alt="" aria-hidden="true" loading="lazy" />
-        <img class="floral-corner floral-bl" src="https://api.iconify.design/noto/cherry-blossom.svg"
-            alt="" aria-hidden="true" loading="lazy" />
-        <img class="floral-corner floral-br" src="https://api.iconify.design/noto/hibiscus.svg"
-            alt="" aria-hidden="true" loading="lazy" />
+        <!-- Line-art botanical corners (Game Icons, tinted gold) -->
+        <span class="floral floral-corner floral-tl"
+            style="--icon:url(https://api.iconify.design/game-icons/flowers.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-tr"
+            style="--icon:url(https://api.iconify.design/game-icons/rose.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-bl"
+            style="--icon:url(https://api.iconify.design/game-icons/daisy.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-br"
+            style="--icon:url(https://api.iconify.design/game-icons/vine-flower.svg)"
+            aria-hidden="true"></span>
 
         <div class="container reveal">
             <div class="section-num" aria-hidden="true">
@@ -2496,15 +2636,16 @@
             <!-- Floral divider: gold line + centered bloom -->
             <div class="floral-divider" aria-hidden="true">
                 <span class="fd-line"></span>
-                <img class="fd-icon" src="https://api.iconify.design/noto/rosette.svg"
-                    alt="" loading="lazy" />
+                <span class="floral fd-icon"
+                    style="--icon:url(https://api.iconify.design/game-icons/flower-emblem.svg)"></span>
                 <span class="fd-line"></span>
             </div>
 
             <div class="grid">
                 <div class="person">
-                    <img class="name-orn" src="https://api.iconify.design/noto/cherry-blossom.svg"
-                        alt="" aria-hidden="true" loading="lazy" />
+                    <span class="floral name-orn"
+                        style="--icon:url(https://api.iconify.design/game-icons/daisy.svg)"
+                        aria-hidden="true"></span>
                     <div class="name">Atikah Nuranini</div>
                     <div class="parents">
                         <span data-id="Putri dari" data-en="Daughter of">Putri dari</span><br />
@@ -2513,15 +2654,17 @@
                 </div>
 
                 <div class="and">
-                    <!-- Watercolor bouquet framing the ampersand -->
-                    <img class="wreath-img" src="https://api.iconify.design/noto/bouquet.svg"
-                        alt="" aria-hidden="true" loading="lazy" />
+                    <!-- Laurel wreath framing the ampersand -->
+                    <span class="floral wreath-img"
+                        style="--icon:url(https://api.iconify.design/game-icons/laurels.svg)"
+                        aria-hidden="true"></span>
                     <span class="amp-glyph">&amp;</span>
                 </div>
 
                 <div class="person">
-                    <img class="name-orn" src="https://api.iconify.design/noto/rose.svg"
-                        alt="" aria-hidden="true" loading="lazy" />
+                    <span class="floral name-orn"
+                        style="--icon:url(https://api.iconify.design/game-icons/rose.svg)"
+                        aria-hidden="true"></span>
                     <div class="name">Daffa Shafwan</div>
                     <div class="parents">
                         <span data-id="Putra dari" data-en="Son of">Putra dari</span><br />
@@ -2530,14 +2673,14 @@
                 </div>
             </div>
 
-            <!-- Bottom flourish: bouquet + florals sprinkled around -->
+            <!-- Bottom flourish: vine + flower emblem + vine -->
             <div class="section-flourish" aria-hidden="true">
-                <img class="sf-side sf-side-l" src="https://api.iconify.design/noto/cherry-blossom.svg"
-                    alt="" loading="lazy" />
-                <img class="sf-center" src="https://api.iconify.design/noto/bouquet.svg"
-                    alt="" loading="lazy" />
-                <img class="sf-side sf-side-r" src="https://api.iconify.design/noto/rose.svg"
-                    alt="" loading="lazy" />
+                <span class="floral sf-side sf-side-l"
+                    style="--icon:url(https://api.iconify.design/game-icons/vine-leaf.svg)"></span>
+                <span class="floral sf-center"
+                    style="--icon:url(https://api.iconify.design/game-icons/flowers.svg)"></span>
+                <span class="floral sf-side sf-side-r"
+                    style="--icon:url(https://api.iconify.design/game-icons/vine-leaf.svg)"></span>
             </div>
         </div>
     </section>
@@ -2615,7 +2758,7 @@
                 <div class="big-date">
                     <div class="cell">
                         <div class="lbl" data-id="Bln" data-en="Mo">Bln</div>
-                        <div class="val">X</div>
+                        <div class="val">IX</div>
                     </div>
                     <div class="sep" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
@@ -2630,7 +2773,7 @@
                     </div>
                     <div class="cell">
                         <div class="lbl" data-id="Hari" data-en="Day">Hari</div>
-                        <div class="val">10</div>
+                        <div class="val">11</div>
                     </div>
                     <div class="sep" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
@@ -2649,8 +2792,8 @@
                     </div>
                 </div>
                 <div class="day-of-week"
-                    data-id="Sabtu · Oktober · 2026"
-                    data-en="Saturday · October · 2026">Sabtu · Oktober · 2026</div>
+                    data-id="Jumat · September · 2026"
+                    data-en="Friday · September · 2026">Jumat · September · 2026</div>
 
                 <div class="schedule">
                     <div class="slot">
@@ -2695,15 +2838,19 @@
 
     <!-- ============ LOCATION ============ -->
     <section class="location">
-        <!-- Watercolor botanical corner accents (Noto Emoji via Iconify) -->
-        <img class="floral-corner floral-tl" src="https://api.iconify.design/noto/herb.svg"
-            alt="" aria-hidden="true" loading="lazy" />
-        <img class="floral-corner floral-tr" src="https://api.iconify.design/noto/leaf-fluttering-in-wind.svg"
-            alt="" aria-hidden="true" loading="lazy" />
-        <img class="floral-corner floral-bl" src="https://api.iconify.design/noto/four-leaf-clover.svg"
-            alt="" aria-hidden="true" loading="lazy" />
-        <img class="floral-corner floral-br" src="https://api.iconify.design/noto/tulip.svg"
-            alt="" aria-hidden="true" loading="lazy" />
+        <!-- Line-art botanical corners (Game Icons, tinted gold) -->
+        <span class="floral floral-corner floral-tl"
+            style="--icon:url(https://api.iconify.design/game-icons/sprout.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-tr"
+            style="--icon:url(https://api.iconify.design/game-icons/vine-leaf.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-bl"
+            style="--icon:url(https://api.iconify.design/game-icons/vine-flower.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-br"
+            style="--icon:url(https://api.iconify.design/game-icons/lotus.svg)"
+            aria-hidden="true"></span>
 
         <div class="container reveal-blur">
             <div class="section-num" aria-hidden="true">
@@ -2724,8 +2871,8 @@
             <!-- Floral divider before the map -->
             <div class="floral-divider" aria-hidden="true">
                 <span class="fd-line"></span>
-                <img class="fd-icon" src="https://api.iconify.design/noto/herb.svg"
-                    alt="" loading="lazy" />
+                <span class="floral fd-icon"
+                    style="--icon:url(https://api.iconify.design/game-icons/vine-leaf.svg)"></span>
                 <span class="fd-line"></span>
             </div>
 
@@ -2799,14 +2946,14 @@
                     data-id="Buka di Google Maps" data-en="Open in Google Maps">Buka di Google Maps</a>
             </div>
 
-            <!-- Bottom flourish: leaf spray with map pin center -->
+            <!-- Bottom flourish: vine + pin + vine -->
             <div class="section-flourish" aria-hidden="true">
-                <img class="sf-side sf-side-l" src="https://api.iconify.design/noto/herb.svg"
-                    alt="" loading="lazy" />
-                <img class="sf-center" src="https://api.iconify.design/noto/round-pushpin.svg"
-                    alt="" loading="lazy" />
-                <img class="sf-side sf-side-r" src="https://api.iconify.design/noto/leaf-fluttering-in-wind.svg"
-                    alt="" loading="lazy" />
+                <span class="floral sf-side sf-side-l"
+                    style="--icon:url(https://api.iconify.design/game-icons/vine-leaf.svg)"></span>
+                <span class="floral sf-center"
+                    style="--icon:url(https://api.iconify.design/game-icons/position-marker.svg)"></span>
+                <span class="floral sf-side sf-side-r"
+                    style="--icon:url(https://api.iconify.design/game-icons/vine-leaf.svg)"></span>
             </div>
         </div>
     </section>
@@ -2830,8 +2977,8 @@
             <!-- Floral divider before form -->
             <div class="floral-divider" aria-hidden="true">
                 <span class="fd-line"></span>
-                <img class="fd-icon" src="https://api.iconify.design/noto/love-letter.svg"
-                    alt="" loading="lazy" />
+                <span class="floral fd-icon"
+                    style="--icon:url(https://api.iconify.design/game-icons/love-letter.svg)"></span>
                 <span class="fd-line"></span>
             </div>
 
@@ -2889,11 +3036,13 @@
 
     <!-- ============ GIFT NOTE (no digital envelope, physical only) ============ -->
     <section class="gift-note">
-        <!-- Watercolor floral corners -->
-        <img class="floral-corner floral-tl" src="https://api.iconify.design/noto/wrapped-gift.svg"
-            alt="" aria-hidden="true" loading="lazy" />
-        <img class="floral-corner floral-br" src="https://api.iconify.design/noto/cherry-blossom.svg"
-            alt="" aria-hidden="true" loading="lazy" />
+        <!-- Line-art botanical corners -->
+        <span class="floral floral-corner floral-tl"
+            style="--icon:url(https://api.iconify.design/game-icons/heart-plus.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-br"
+            style="--icon:url(https://api.iconify.design/game-icons/daisy.svg)"
+            aria-hidden="true"></span>
 
         <div class="container reveal-scale">
             <div class="section-num" aria-hidden="true">
@@ -2908,8 +3057,8 @@
             <!-- Floral divider replacing linked-hearts SVG -->
             <div class="floral-divider" aria-hidden="true">
                 <span class="fd-line"></span>
-                <img class="fd-icon" src="https://api.iconify.design/noto/two-hearts.svg"
-                    alt="" loading="lazy" />
+                <span class="floral fd-icon"
+                    style="--icon:url(https://api.iconify.design/game-icons/heart-plus.svg)"></span>
                 <span class="fd-line"></span>
             </div>
 
@@ -2923,11 +3072,13 @@
 
     <!-- ============ FOOTER ============ -->
     <footer>
-        <!-- Watercolor floral corners (Noto Emoji via Iconify) -->
-        <img class="floral-corner floral-bl hero-corner" src="https://api.iconify.design/noto/bouquet.svg"
-            alt="" aria-hidden="true" />
-        <img class="floral-corner floral-br hero-corner" src="https://api.iconify.design/noto/rose.svg"
-            alt="" aria-hidden="true" />
+        <!-- Line-art botanical corners -->
+        <span class="floral floral-corner floral-bl hero-corner"
+            style="--icon:url(https://api.iconify.design/game-icons/flowers.svg)"
+            aria-hidden="true"></span>
+        <span class="floral floral-corner floral-br hero-corner"
+            style="--icon:url(https://api.iconify.design/game-icons/rose.svg)"
+            aria-hidden="true"></span>
 
         <div class="container">
             <div class="monogram" style="width:96px;height:96px;margin:0 auto 30px;">
@@ -2952,6 +3103,10 @@
             </p>
             <div class="hashtag">#DaffinitelyAtikah</div>
             <div class="sign">Daffa &nbsp;&amp;&nbsp; Atikah</div>
+            <div class="credits" aria-hidden="true">
+                Icons: <a href="https://game-icons.net" target="_blank" rel="noopener">game-icons.net</a>
+                (<a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a>)
+            </div>
         </div>
     </footer>
 
@@ -3020,6 +3175,30 @@
                         lat: -7.4464282,
                         lng: 112.6998567,
                         icon: "toll"
+                    },
+                    {
+                        id: "alun-alun-sidoarjo",
+                        nameId: "Alun-Alun Sidoarjo",
+                        nameEn: "Sidoarjo Town Square",
+                        lat: -7.44612,
+                        lng: 112.71787,
+                        icon: "plaza"
+                    },
+                    {
+                        id: "masjid-agung",
+                        nameId: "Masjid Agung Sidoarjo",
+                        nameEn: "Sidoarjo Grand Mosque",
+                        lat: -7.44585,
+                        lng: 112.71649,
+                        icon: "mosque"
+                    },
+                    {
+                        id: "stasiun-sidoarjo",
+                        nameId: "Stasiun Sidoarjo",
+                        nameEn: "Sidoarjo Train Station",
+                        lat: -7.4569,
+                        lng: 112.7129,
+                        icon: "train"
                     }
                 ]
             }
@@ -3595,8 +3774,62 @@
                         '<rect x="10.5" y="14" width="3" height="6" />' +
                         '<circle cx="7" cy="16" r="0.7" fill="currentColor" />' +
                         '<circle cx="17" cy="16" r="0.7" fill="currentColor" />' +
+                        '</svg>',
+                    mosque:
+                        // Dome + minaret + base
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' +
+                        '<path d="M4 20 V 12 H 20 V 20 Z" />' +
+                        '<path d="M6 12 V 9 M 18 12 V 9" />' +
+                        '<path d="M8 12 C 8 8, 16 8, 16 12" />' +
+                        '<path d="M12 8 V 5" />' +
+                        '<circle cx="12" cy="4.5" r="0.9" fill="currentColor" />' +
+                        '<path d="M4 20 H 20" />' +
+                        '<rect x="10.5" y="15" width="3" height="5" />' +
+                        '</svg>',
+                    train:
+                        // Simple train silhouette on tracks
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' +
+                        '<rect x="5" y="4" width="14" height="12" rx="2" />' +
+                        '<line x1="5" y1="10" x2="19" y2="10" />' +
+                        '<circle cx="8.5" cy="13.5" r="1.1" />' +
+                        '<circle cx="15.5" cy="13.5" r="1.1" />' +
+                        '<path d="M7 16 L 5 19 M 17 16 L 19 19" />' +
+                        '<line x1="3" y1="20" x2="21" y2="20" />' +
+                        '</svg>',
+                    plaza:
+                        // Tree in a square / park icon
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' +
+                        '<rect x="3" y="3" width="18" height="18" rx="1.5" />' +
+                        '<path d="M12 8 C 9.5 8, 8 10, 8.5 12 C 7 12.5, 7 15, 9 15 L 15 15 C 17 15, 17 12.5, 15.5 12 C 16 10, 14.5 8, 12 8 Z" />' +
+                        '<line x1="12" y1="15" x2="12" y2="18" />' +
                         '</svg>'
                 };
+
+                // ==============================================================
+                // Venue marker — distinct, bigger dot with heart icon
+                // Ditambahin biar lokasi mempelai punya penanda yang jelas
+                // (bukan cuma extrusion polygon 3D).
+                // ==============================================================
+                const VENUE_ICON =
+                    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+                    '<path d="M12 20.5 C 8 17, 3 13.5, 3 9 C 3 6.5, 5 4.5, 7.5 4.5 C 9.4 4.5, 10.8 5.6, 12 7 C 13.2 5.6, 14.6 4.5, 16.5 4.5 C 19 4.5, 21 6.5, 21 9 C 21 13.5, 16 17, 12 20.5 Z" />' +
+                    '</svg>';
+
+                if (mapCenter) {
+                    const venueEl = document.createElement("div");
+                    venueEl.className = "landmark-marker venue-marker";
+                    venueEl.dataset.landmarkId = "venue";
+                    venueEl.innerHTML =
+                        '<div class="dot">' + VENUE_ICON + '</div>' +
+                        '<div class="label"' +
+                        ' data-id="' + (CONFIG.venue.nameId || "Kediaman Mempelai") + '"' +
+                        ' data-en="' + (CONFIG.venue.nameEn || "The Wedding Residence") + '">' +
+                        (CONFIG.venue.nameId || "Kediaman Mempelai") +
+                        '</div>';
+                    new maplibregl.Marker({ element: venueEl, anchor: "left" })
+                        .setLngLat(mapCenter)
+                        .addTo(map);
+                }
 
                 const landmarkMarkers = [];
                 (CONFIG.venue.landmarks || []).forEach(lm => {
@@ -3619,12 +3852,15 @@
                 });
 
                 // ==============================================================
-                // Auto-fit: venue plot + semua landmark (wide neighborhood view)
+                // Auto-fit: venue plot + venue marker + semua landmark
+                // (wide neighborhood view) — pastiin venue point selalu masuk
+                // bounds walau plot polygon kecil banget.
                 // ==============================================================
                 const allPoints = [];
                 if (plot) {
                     plot.features[0].geometry.coordinates[0].forEach(c => allPoints.push(c));
                 }
+                if (mapCenter) allPoints.push(mapCenter);
                 landmarkMarkers.forEach(m => allPoints.push([m.lng, m.lat]));
 
                 if (allPoints.length) {
@@ -3817,11 +4053,9 @@
 
                 // ==============================================================
                 // Legend build — venue + landmarks dengan icon & label bilingual
+                // Venue pakai heart icon supaya konsisten sama marker di map.
                 // ==============================================================
-                const VENUE_PIN_ICON =
-                    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
-                    '<path d="M12 2 C 7.5 2, 4 5.5, 4 10 C 4 16, 12 22, 12 22 S 20 16, 20 10 C 20 5.5, 16.5 2, 12 2 Z M 12 12.5 A 2.5 2.5 0 1 1 12 7.5 A 2.5 2.5 0 0 1 12 12.5 Z" />' +
-                    '</svg>';
+                const VENUE_PIN_ICON = VENUE_ICON;
 
                 if (legendList) {
                     const items = [];
